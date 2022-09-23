@@ -1,0 +1,166 @@
+"Phrases"
+{
+	"achievements menu: title"
+	{
+		"#format"			""
+		"ru"				"Достижения:\n "
+		"en"				"Achievements:\n "
+	}
+	"achievements menu: own achievements"
+	{
+		"#format"			""
+		"ru"				"Ваши достижения"
+		"en"				"Your achievements"
+	}
+	"achievements menu: players achievements"
+	{
+		"#format"			""
+		"ru"				"Достижения игроков"
+		"en"				"Players achievements"
+	}
+	
+	"players menu: title"
+	{
+		"#format"			""
+		"ru"				"Выберите игрока:\n "
+		"en"				"Select player:\n "
+	}
+	"players menu: player left"
+	{
+		"#format"			""
+		"ru"				"Игрок покинул сервер"
+		"en"				"Player left"
+	}
+	"players menu: no other players" 
+	{
+		"#format"			""
+		"ru"				"Нет других игроков"
+		"en"				"No other players"
+	}
+	
+	"achievements type menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Достижения: {1}\n "
+		"en"				"{1}'s achievements:\n "
+	}
+	"achievements type menu: overall progress"
+	{
+		"#format"			"{1:d},{2:d},{3:.1f}"
+		"ru"				"Общий прогресс: {1}/{2} ({3}%%)\n "
+		"en"				"Overall progress: {1}/{2} ({3}%%)\n "
+	}
+	"achievements type menu: in progress"
+	{
+		"#format"			""
+		"ru"				"Достижения в процессе"
+		"en"				"Achievements in progress"
+	}
+	"achievements type menu: completed"
+	{
+		"#format"			""
+		"ru"				"Полученные достижения"
+		"en"				"Completed achievements"
+	}
+	
+	"achievements in progress menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Достижения в процессе у {1}:\n "
+		"en"				"{1}'s achievements in progress:\n "
+	}
+	"achievements in progress menu: empty"
+	{
+		"#format"			""
+		"ru"				"У игрока получены все достижения!"
+		"en"				"Player have all achievement!"
+	}
+	
+	"completed achievements menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Завершённые достижения у {1}:\n "
+		"en"				"{1}'s completed achievements:\n "
+	}
+	"completed achievements menu: empty"
+	{
+		"#format"			""
+		"ru"				"У игрока пока нет достижений"
+		"en"				"Player don't have any achievements yet"
+	}
+	
+	"achievement details menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Информация о достижении у {1}:\n "
+		"en"				"{1}'s achievement details:\n "
+	}
+	"achievement details menu: name"
+	{
+		"#format"			""
+		"ru"				"Название: "
+		"en"				"Name: "
+	}
+	"achievement details menu: description"
+	{
+		"#format"			""
+		"ru"				"Описание: "
+		"en"				"Description: "
+	}
+	"achievement details menu: reward"
+	{
+		"#format"			""
+		"ru"				"Награда: "
+		"en"				"Reward: "
+	}
+	"achievement details menu: progress"
+	{
+		"#format"			"{1:d},{2:d},{3:.1f}"
+		"ru"				"Прогресс: {1}/{2} ({3}%%)"
+		"en"				"Progress: {1}/{2} ({3}%%)"
+	}
+	
+	"menu: back"
+	{
+		"#format"			""
+		"ru"				"Назад"
+		"en"				"Back"
+	}
+	"menu: exit"
+	{
+		"#format"			""
+		"ru"				"Выход"
+		"en"				"Exit"
+	}
+	
+	"client got achievement"
+	{
+		"#format"			"{1:s},{2:s}"
+		"ru"				"Игрок {1} выполнил достижение {2}"
+		"en"				"Player {1} got achievement {2}"
+	}
+	
+	"you got achievement: chat"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Вы успешно выполнили достижение {1}"
+	}
+	
+	"you got achievement: center"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Вы успешно выполнили достижение {1}"
+	}
+	
+	"you got achievement: alert"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Вы успешно выполнили достижение <font color='#FF0000'>{1}</font>"
+	}
+
+	"client is not loaded"
+	{
+		"ru"				"Данные о клиенте ещё не загружены. Пожалуйста, подождите"
+		"en"				"Client's data is not loaded. Please wait."
+	}
+}

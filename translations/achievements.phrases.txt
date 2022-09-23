@@ -1,0 +1,183 @@
+"Phrases"
+{
+	// Шаблон заполнения для достижения
+	// "Название достижения из конфига: name"	// отображаемое название в меню (название достижения)
+	// {
+		// "#format"			""
+		// "ru"				""
+		// "en"				""
+	// }
+	// "Название достижения из конфига: description" // описание достижения (что игрок должен сделать, {1} для вывода необходимого количества выполнений)
+	// {
+		// "#format"			"{1:d}"
+		// "ru"				""
+		// "en"				""
+	// }
+	// "Название достижения из конфига: reward" // награда за получение достижения (в виде текстового описания)
+	// {
+		// "#format"			""
+		// "ru"				""
+		// "en"				""
+	// }
+	// Примеры см. ниже
+	
+	"Killer I: name"
+	{
+		"ru"				"Убийца I"
+		"en"				"Killer I"
+	}
+	"Killer I: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer I: reward"
+	{
+		"ru"				"5 кредитов"
+		"en"				"5 credits"
+	}
+	
+	"Killer II: name"
+	{
+		"ru"				"Убийца II"
+		"en"				"Killer II"
+	}
+	"Killer II: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer II: reward"
+	{
+		"ru"				"30 кредитов"
+		"en"				"30 credits"
+	}
+	
+	"Killer III: name"
+	{
+		"ru"				"Убийца III"
+		"en"				"Killer III"
+	}
+	"Killer III: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer III: reward"
+	{
+		"ru"				"50 кредитов"
+		"en"				"50 credits"
+	}
+	
+	"Killer IV: name"
+	{
+		"ru"				"Убийца IV"
+		"en"				"Killer IV"
+	}
+	"Killer IV: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer IV: reward"
+	{
+		"ru"				"150 кредитов"
+		"en"				"150 credits"
+	}
+	
+	"Killer V: name"
+	{
+		"ru"				"Убийца V"
+		"en"				"Killer V"
+	}
+	"Killer V: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer V: reward"
+	{
+		"ru"				"450 кредитов"
+		"en"				"450 credits"
+	}
+	
+	"Killer VI: name"
+	{
+		"ru"				"Убийца VI"
+		"en"				"Killer VI"
+	}
+	"Killer VI: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer VI: reward"
+	{
+		"ru"				"950 кредитов"
+		"en"				"950 credits"
+	}
+	
+	"Killer VII: name"
+	{
+		"ru"				"Убийца VII"
+		"en"				"Killer VII"
+	}
+	"Killer VII: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer VII: reward"
+	{
+		"ru"				"1450 кредитов"
+		"en"				"1450 credits"
+	}
+	
+	"Killer VIII: name"
+	{
+		"ru"				"Убийца VIII"
+		"en"				"Killer VIII"
+	}
+	"Killer VIII: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer VIII: reward"
+	{
+		"ru"				"2000 кредитов"
+		"en"				"2000 credits"
+	}
+	
+	"Killer IX: name"
+	{
+		"ru"				"Убийца IX"
+		"en"				"Killer IX"
+	}
+	"Killer IX: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer IX: reward"
+	{
+		"ru"				"2750 кредитов"
+		"en"				"2750 credits"
+	}
+	
+	"Killer X: name"
+	{
+		"ru"				"Убийца X"
+		"en"				"Killer X"
+	}
+	"Killer X: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков"
+	}
+	"Killer X: reward"
+	{
+		"ru"				"5000 кредитов"
+		"en"				"5000 credits"
+	}
+}
