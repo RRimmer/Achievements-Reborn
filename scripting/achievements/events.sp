@@ -1,10 +1,10 @@
-public Event_ClientCallback(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
+public void Event_ClientCallback(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 {
 	int iClient = CID(GetEventInt(hEvent, "userid"));
 	ProcessEvents(iClient, hEvent, sEventName);
 }
 
-public Event_AttackerCallback(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
+public void Event_AttackerCallback(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 {
 	int iClient = CID(GetEventInt(hEvent, "attacker"));
 	if ( iClient > 0 && iClient <= MaxClients ) {
@@ -12,7 +12,7 @@ public Event_AttackerCallback(Handle hEvent, const char[] sEventName, bool bDont
 	}
 }
 
-ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
+void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 {
 	Handle hEventArray;
 	if (IsFakeClient(iClient) || !GetTrieValue(g_hTrie_EventAchievements, sEventName, hEventArray) ) {
@@ -59,14 +59,16 @@ ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 		
 		if(iCount < iBuffer && iCount != -1) {
 			GetTrieString(hAchievementData, "condition", SZF(sBuffer));
-			iParts = ExplodeString(sBuffer, ",", sParts, sizeof(sParts), sizeof(sParts));
-			for (int j = 0; j < iParts; ++j ) {
-				if ( !CheckCondition(sParts[j], hEvent) ) {
+			iParts = ExplodeString(sBuffer, ";", sParts, sizeof(sParts), sizeof(sParts[]));
+
+			for(int l; l < iParts; l++)
+			{
+				if(!CheckCondition(sParts[l], hEvent))
+				{
 					bFlag = false;
-					break;
 				}
 			}
-			
+				
 			if ( bFlag ) {
 				iCount++;
 				SetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
@@ -135,14 +137,13 @@ void AlertText(int iClient, const char[] sMessage, any ...)
 bool CheckCondition(char[] sCondition, Handle hEvent)
 {
 	TrimString(sCondition);
-	
 	char sConditionParts[3][128];
-	int iParts = ExplodeString(sCondition, " ", sConditionParts, sizeof(sConditionParts), sizeof(sConditionParts));
+	int iParts = ExplodeString(sCondition, " ", sConditionParts, sizeof(sConditionParts), sizeof(sConditionParts[]));
 	
 	switch (iParts) {
 		case 1: {
-			if ( sCondition[0] ) {
-				return ( GetEventBool(hEvent, sCondition) );
+			if (sCondition[0]) {
+				return (GetEventBool(hEvent, sCondition));
 			}
 			else {
 				return true;
@@ -194,7 +195,6 @@ bool CheckCondition(char[] sCondition, Handle hEvent)
 					}
 					return false;
 				}
-				
 			}
 		}
 		

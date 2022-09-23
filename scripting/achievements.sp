@@ -2,6 +2,7 @@
 // >>> GLOBAL INCLUDES
 // ==============================================================================================================================
 #pragma semicolon 1
+#pragma newdecls required
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
@@ -12,7 +13,7 @@
 // ==============================================================================================================================
 
 #define PLUGIN_VERSION "1.0"
-public Plugin:myinfo =
+public Plugin myinfo =
 {
 	name 			= "[Achievements][Reborn] Core",
 	author 			= "AlexTheRegent && Pisex",
@@ -31,20 +32,6 @@ public Plugin:myinfo =
 #define UID(%0) 	GetClientUserId(%0)
 #define SZF(%0) 	%0, sizeof(%0)
 #define LC(%0) 		for (int %0 = 1; %0 <= MaxClients; ++%0) if ( IsClientInGame(%0) ) 
-
-// debug stuff
-#define DEBUG 1
-#if defined DEBUG
-stock DebugMessage(const  char[] message, any ...)
-{
-	char sMessage[256];
-	VFormat(sMessage, sizeof(sMessage), message, 2);
-	PrintToServer("[Debug] %s", sMessage);
-}
-#define DbgMsg(%0); DebugMessage(%0);
-#else
-#define DbgMsg(%0);
-#endif
 
 // ==============================================================================================================================
 // >>> CONSOLE VARIABLES
@@ -128,7 +115,7 @@ public APLRes AskPluginLoad2(Handle hMySelf, bool bLate, char[] sError, int iErr
 	return APLRes_Success;
 }
 
-public OnPluginStart() 
+public void OnPluginStart() 
 {	
     hTriggers = new StringMap();
 	// load translations
@@ -149,7 +136,7 @@ public OnPluginStart()
 	HookEvent("round_start",OnRound);
 }
 
-public OnRound(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
+public void OnRound(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 {
 	if(sEventName[6] == 'e')
 		IsRoundEnd = true;

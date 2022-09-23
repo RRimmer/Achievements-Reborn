@@ -3,7 +3,7 @@ int
 	g_iLastMenuType[MPS],
 	g_iLastMenuSelection[MPS];
 
-public Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
+public int Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
 	switch ( action ) {
 		case MenuAction_Select: {
@@ -28,7 +28,7 @@ public Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, int i
 	}
 }
 
-public Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
+public int Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
 	switch ( action ) {
 		case MenuAction_Select: {
@@ -60,7 +60,7 @@ public Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int iSlot
 	}
 }
 
-public Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
+public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
 	switch ( action ) {
 		case MenuAction_Select: {
@@ -112,7 +112,7 @@ public Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient, in
 	}
 }
 
-public Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, int iSlot)
+public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
 	switch ( action ) {
 		case MenuAction_DisplayItem: {
@@ -175,7 +175,7 @@ public Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, int 
 	return 0;
 }
 
-public Handler_ShowAchievementDetails(Menu hMenu, MenuAction action, int iClient, int iSlot)
+public int Handler_ShowAchievementDetails(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
 	switch ( action ) {
 		case MenuAction_Select: {

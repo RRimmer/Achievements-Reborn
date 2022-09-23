@@ -1,4 +1,4 @@
-GiveReward(int iClient, const char[] sName)
+void GiveReward(int iClient, const char[] sName)
 {
 	Handle hAchievementData;
 	char sTrigger[64],sOutcome[64],sIndexTrigger[12];

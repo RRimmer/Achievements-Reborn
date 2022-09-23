@@ -1,4 +1,4 @@
-LoadAchivements()
+void LoadAchivements()
 {
 	char sPath[PMP];
 	BuildPath(Path_SM, SZF(sPath), "configs/achievements.ini");

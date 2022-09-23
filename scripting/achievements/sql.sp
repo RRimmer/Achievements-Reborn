@@ -4,7 +4,7 @@ char	g_sAuth[MPS][32];
 
 int	g_iClientId[MPS];
 
-CreateDatabase()
+void CreateDatabase()
 {
 	if ( SQL_CheckConfig("achievements") ) {
 		// SQL_TConnect(SQLT_OnConnect, "achievements");
@@ -34,7 +34,7 @@ public void OnDBConnect(Database hDatabase, const char[] sError, any data)
 	CreateTables();
 }
 
-CreateTables()
+void CreateTables()
 {
 	char driver[16],query[1024];
     DBDriver Driver = g_hSQLdb.Driver;
@@ -92,7 +92,7 @@ public void SQL_CheckError(Database hDatabase, DBResultSet results, const char[]
 	if(szError[0]) LogError("SQL_Callback_CheckError: %s", szError);
 }
 
-public SQLT_OnCreateTables(Handle hOwner, Handle hQuery, const char[] sError, any data)
+public void SQLT_OnCreateTables(Handle hOwner, Handle hQuery, const char[] sError, any data)
 {
 	if ( !hQuery ) {
 		LogError("SQLT_OnCreateTables failure: \"%s\"", sError);
@@ -100,7 +100,7 @@ public SQLT_OnCreateTables(Handle hOwner, Handle hQuery, const char[] sError, an
 	}
 }
 
-LoadClient(iClient)
+void LoadClient(int iClient)
 {
 	if(!IsFakeClient(iClient))
 	{
@@ -112,7 +112,7 @@ LoadClient(iClient)
 	}
 }
 
-public SQLT_OnLoadClient(Handle hOwner, Handle hQuery, const char[] sError, any iUserId)
+public void SQLT_OnLoadClient(Handle hOwner, Handle hQuery, const char[] sError, any iUserId)
 {
 	if ( !hQuery ) {
 		LogError("SQLT_OnLoadClient failure: \"%s\"", sError);
@@ -133,7 +133,7 @@ public SQLT_OnLoadClient(Handle hOwner, Handle hQuery, const char[] sError, any 
 	}
 }
 
-public SQLT_OnSaveClient(Handle hOwner, Handle hQuery, const char[] sError, any iUserId)
+public void SQLT_OnSaveClient(Handle hOwner, Handle hQuery, const char[] sError, any iUserId)
 {
 	if ( !hQuery ) {
 		LogError("SQLT_OnSaveClient failure: \"%s\"", sError);
@@ -146,14 +146,14 @@ public SQLT_OnSaveClient(Handle hOwner, Handle hQuery, const char[] sError, any 
 	LoadClient(iClient);
 }
 
-LoadProgress(iClient)
+void LoadProgress(int iClient)
 {
 	char sQuery[256];
 	FormatEx(SZF(sQuery), "SELECT `achievement`, `count` FROM `progress` WHERE `client_id` = %d AND `server_id`;", g_iClientId[iClient],g_iSettings[4]);
 	SQL_TQuery(g_hSQLdb, SQLT_OnLoadProgress, sQuery, UID(iClient));
 }
 
-public SQLT_OnLoadProgress(Handle hOwner, Handle hQuery, const char[]sError, any iUserId)
+public void SQLT_OnLoadProgress(Handle hOwner, Handle hQuery, const char[]sError, any iUserId)
 {
 	if ( !hQuery ) {
 		LogError("SQLT_OnLoadProgress failure: \"%s\"", sError);
@@ -174,7 +174,7 @@ public SQLT_OnLoadProgress(Handle hOwner, Handle hQuery, const char[]sError, any
 	CreateProgressMenu(iClient);
 }
 
-SaveProgress(int iClient, const char[] sName, bool bUpdate)
+void SaveProgress(int iClient, const char[] sName, bool bUpdate)
 {
 	int iCount;
 	GetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
