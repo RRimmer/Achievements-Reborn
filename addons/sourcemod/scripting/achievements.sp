@@ -7,6 +7,8 @@
 #include <sdktools>
 #include <sdkhooks>
 #include <achievements>
+#include <morecolors>
+#include <csgo_colors>
 
 // ==============================================================================================================================
 // >>> PLUGIN INFORMATION
@@ -19,7 +21,7 @@ public Plugin myinfo =
 	author 			= "AlexTheRegent && Pisex",
 	description 	= "",
 	version 		= PLUGIN_VERSION,
-	url 			= ""
+	url 			= "https://hlmod.ru/resources/achievements-core.3936/"
 }
 // ==============================================================================================================================
 // >>> DEFINES
@@ -46,6 +48,7 @@ ArrayList g_hArray_sAchievementSound;
 Handle g_hTrie_AchievementData;			// name -> event, executor, condition, count, reward
 Handle g_hTrie_ClientProgress[MPS];		// name -> count
 Handle g_hTrie_EventAchievements;			// event -> array with achievement names
+EngineVersion g_EngineVersion;
 
 Handle g_hCoreIsLoad;
 
@@ -64,6 +67,7 @@ int iTriggerNum;
 //3 - Notifacation Type
 //4 - Server id
 int g_iSettings[5];
+char g_sTag[128];
 bool IsRoundEnd,
 	g_bLoaded;
 // panel stuff
@@ -123,8 +127,8 @@ public void OnPluginStart()
 	LoadTranslations("achievements.phrases.txt");
 	
 	CreateDatabase();
-
-	if ( GetEngineVersion() == Engine_CSGO ) {
+	g_EngineVersion = GetEngineVersion();
+	if ( g_EngineVersion == Engine_CSGO ) {
 		g_iExitBackButtonSlot = 7;
 		g_iExitButtonSlot = 9;
 	}
@@ -196,4 +200,20 @@ public Action Command_Achievements(int iClient, int iArgc)
 {
 	DisplayAchivementsMenu(iClient);
 	return Plugin_Handled;
+}
+
+public void A_PrintToChat(int iClient, const char[] sMessage) {
+    switch(g_EngineVersion) {
+        case Engine_SourceSDK2006: CPrintToChat(iClient, "%s %s", g_sTag, sMessage);
+        case Engine_CSS: CPrintToChat(iClient, "%s %s", g_sTag, sMessage);
+        case Engine_CSGO: CGOPrintToChat(iClient, "%s %s", g_sTag, sMessage);
+    }
+}
+
+public void A_PrintToChatAll(const char[] sMessage) {
+    switch(g_EngineVersion) {
+        case Engine_SourceSDK2006: CPrintToChatAll("%s %s", g_sTag, sMessage);
+        case Engine_CSS: CPrintToChatAll("%s %s", g_sTag, sMessage);
+        case Engine_CSGO: CGOPrintToChatAll("%s %s", g_sTag, sMessage);
+    }
 }

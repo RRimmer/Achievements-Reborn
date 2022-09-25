@@ -76,7 +76,8 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 
 				if ( iCount >= iBuffer ) {
 					char sTranslation[64],
-						sSound[64];
+						sSound[64],
+						sMessage[128];
 					int iNotifAll;
 					GetTrieValue(hAchievementData, "notification_all",iNotifAll);
 					FormatEx(SZF(sTranslation), "%s: name", sName);
@@ -85,13 +86,15 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 					{
 						char sClientName[32];
 						GetClientName(iClient, SZF(sClientName));
-						PrintToChatAll("%t", "client got achievement", sClientName, sTranslation);
+						FormatEx(sMessage,sizeof sMessage,"%t", "client got achievement", sClientName, sTranslation);
+						A_PrintToChatAll(sMessage);
 					}
 					switch(g_iSettings[3])
 					{
 						case 1:
 						{
-							PrintToChat(iClient,"%t", "you got achievement: chat", sTranslation);
+							FormatEx(sMessage,sizeof sMessage,"%t", "you got achievement: chat", sTranslation);
+							A_PrintToChat(iClient, sMessage);
 						}
 						case 2:
 						{
@@ -111,6 +114,7 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 					}
 					SetTrieValue(g_hTrie_ClientProgress[iClient], sName, -1);
 					SaveProgress(iClient, sName, bUpdate);
+					SaveProgressCompleted(iClient);
 					GiveReward(iClient, sName);
 					CreateProgressMenu(iClient);
 				}

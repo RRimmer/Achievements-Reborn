@@ -46,6 +46,8 @@ void CreateTables()
 		FormatEx(query, sizeof(query),		"CREATE TABLE IF NOT EXISTS `clients`(\
 																`id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
 																`auth` VARCHAR(32) NOT NULL,\
+																`name` VARCHAR(64) NOT NULL,\
+																`completed` INTEGER NOT NULL,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
 
@@ -65,6 +67,8 @@ void CreateTables()
 		FormatEx(query, sizeof(query),		"CREATE TABLE IF NOT EXISTS `clients`(\
 																`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
 																`auth` VARCHAR(32) NOT NULL,\
+																`name` VARCHAR(64) NOT NULL,\
+																`completed` INTEGER NOT NULL,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
 
@@ -128,7 +132,7 @@ public void SQLT_OnLoadClient(Handle hOwner, Handle hQuery, const char[] sError,
 	}
 	else {
 		char sQuery[256];
-		FormatEx(SZF(sQuery), "INSERT INTO `clients` (`auth`,`server_id`) VALUES ('%s', '%i')", g_sAuth[iClient],g_iSettings[4]);
+		FormatEx(SZF(sQuery), "INSERT INTO `clients` (`auth`,`server_id`,`name`) VALUES ('%s', '%i','%N')", g_sAuth[iClient],g_iSettings[4],iClient);
 		SQL_TQuery(g_hSQLdb, SQLT_OnSaveClient, sQuery, iUserId);
 	}
 }
@@ -188,7 +192,14 @@ void SaveProgress(int iClient, const char[] sName, bool bUpdate)
 		FormatEx(SZF(sQuery), "INSERT INTO `progress` (`client_id`, `achievement`, `count`, `server_id`) VALUES (%d, '%s', %d, %i);", g_iClientId[iClient], sName, iCount,g_iSettings[4]);
 		SQL_TQuery(g_hSQLdb, SQLT_OnInsertProgress, sQuery);
 	}
-	
+}
+
+
+void SaveProgressCompleted(int iClient)
+{
+	char sQuery[256];
+	FormatEx(SZF(sQuery), "UPDATE `clients` SET `completed` = `completed`+ 1 WHERE `id` = %d AND `server_id` = '%i';", g_iClientId[iClient],g_iSettings[4]);
+	SQL_TQuery(g_hSQLdb, SQLT_OnUpdateProgress, sQuery);
 }
 
 public void SQLT_OnInsertProgress(Handle hOwner, Handle hQuery, const char[] sError, any hDatapack)
@@ -203,4 +214,11 @@ public void SQLT_OnUpdateProgress(Handle hOwner, Handle hQuery, const char[] sEr
 	if ( !hQuery ) {
 		LogError("SQLT_OnUpdateProgress failure: \"%s\"", sError);
 	}
+}
+
+public void DisplayPlayersTopMenu(int iClient)
+{
+	char query[256];
+	FormatEx(query, sizeof(query), "SELECT `name`, `completed` FROM `clients` ORDER BY `completed` DESC LIMIT 10;");
+	g_hSQLdb.Query(SQL_Callback_TopPlayers, query, GetClientUserId(iClient));
 }

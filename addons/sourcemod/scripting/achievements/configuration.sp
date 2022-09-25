@@ -34,6 +34,7 @@ void LoadAchivements()
 	g_iSettings[2] = KvGetNum(hKeyValues,"min_players");
 	g_iSettings[3] = KvGetNum(hKeyValues,"notification");
 	g_iSettings[4] = KvGetNum(hKeyValues,"server_id");
+	KvGetString(hKeyValues,"tag",g_sTag,sizeof g_sTag);
 
 	if(sCommands[0])
 	{

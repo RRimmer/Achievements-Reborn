@@ -17,6 +17,9 @@ public int Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, i
 			else if ( strcmp(sInfo, "players") == 0 ) {
 				DisplayPlayersMenu(iClient);
 			}
+			else if ( strcmp(sInfo, "top") == 0 ) {
+				DisplayPlayersTopMenu(iClient);
+			}
 			else {
 				LogError("Invalid menu selection \"%s\" (slot %d)", sInfo, iSlot);
 			}
@@ -43,7 +46,9 @@ public int Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int i
 				DisplayAchivementsTypeMenu(iClient, iTarget);
 			}
 			else {
-				PrintToChat(iClient, "%t", "players menu: player left");
+				char sMessage[128];
+				FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+				A_PrintToChat(iClient, sMessage);
 				DisplayPlayersMenu(iClient);
 			}
 		}
@@ -92,23 +97,15 @@ public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient
 					
 				}
 				else {
-					PrintToChat(iClient, "%t", "players menu: player left");
+					char sMessage[128];
+					FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+					A_PrintToChat(iClient, sMessage);
 					DisplayPlayersMenu(iClient);
 				}
 			}
 			
 			
 		}
-		
-		// case MenuAction_Cancel: {
-			// if ( iSlot == MenuCancel_ExitBack ) {
-				// DisplayAchivementsMenu(iClient);
-			// }
-		// }
-		
-		// case MenuAction_End: {
-			// CloseHandle(hMenu);
-		// }
 	}
 }
 
@@ -153,7 +150,9 @@ public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, 
 				g_iLastMenuSelection[iClient] = GetMenuSelectionPosition();
 			}
 			else {
-				PrintToChat(iClient, "%t", "players menu: player left");
+				char sMessage[128];
+				FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+				A_PrintToChat(iClient, sMessage);
 				DisplayPlayersMenu(iClient);
 			}
 		}
@@ -165,7 +164,9 @@ public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, 
 					DisplayAchivementsTypeMenu(iClient, iTarget);
 				}
 				else {
-					PrintToChat(iClient, "%t", "players menu: player left");
+					char sMessage[128];
+					FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+					A_PrintToChat(iClient, sMessage);
 					DisplayPlayersMenu(iClient);
 				}
 			}
@@ -199,12 +200,29 @@ public int Handler_ShowAchievementDetails(Menu hMenu, MenuAction action, int iCl
 					}
 				}
 				else {
-					PrintToChat(iClient, "%t", "players menu: player left");
+					char sMessage[128];
+					FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+					A_PrintToChat(iClient, sMessage);
 					DisplayPlayersMenu(iClient);
 				}
 			}
 			else if ( iSlot == g_iExitButtonSlot ) {
 				
+			}
+		}
+	}
+}
+
+public int HandlerOfPanel(Menu hMenu, MenuAction action, int iClient, int iSlot)
+{
+	switch ( action ) {
+		case MenuAction_Select: {
+			if ( iSlot == g_iExitButtonSlot ) {
+				// do nothing
+			}
+			else if(iSlot == g_iExitBackButtonSlot)
+			{
+				DisplayAchivementsMenu(iClient);
 			}
 		}
 	}

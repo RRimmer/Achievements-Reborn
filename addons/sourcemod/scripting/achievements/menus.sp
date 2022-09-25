@@ -70,6 +70,8 @@ public void DisplayAchivementsMenu(int iClient)
 	AddMenuItem(hMenu, "own", sBuffer);
 	FormatEx(SZF(sBuffer), "%t", "achievements menu: players achievements");
 	AddMenuItem(hMenu, "players", sBuffer);
+	FormatEx(SZF(sBuffer), "%t", "achievements menu: top");
+	AddMenuItem(hMenu, "top", sBuffer);
 	
 	DisplayMenu(hMenu, iClient, MTF);
 }
@@ -146,10 +148,55 @@ public void DisplayAchivementsTypeMenu(int iClient, int iTarget)
 	CloseHandle(hPanel);
 }
 
+void SQL_Callback_TopPlayers(Database database, DBResultSet result, const char[] error, int iClient)
+{
+    if(result == null)
+    {
+        LogError("SQL_Callback_TopPlayers: %s", error);
+        return;
+    }
+
+    iClient = GetClientOfUserId(iClient);
+    if(!iClient) return;
+
+    char sBuffer[64], sName[64];
+    Panel hPanel = new Panel();
+
+	FormatEx(SZF(sBuffer), "%t", "top menu: title");
+	SetPanelTitle(hPanel, sBuffer);
+
+    int count = result.RowCount;
+
+    for(int c = 1; c <= count; c++)
+    {
+        if(result.FetchRow())
+        {
+            result.FetchString(0, sName, sizeof(sName));
+            FormatEx(sBuffer, sizeof(sBuffer), "%d. %s [%i]", c, sName, result.FetchInt(1));
+            hPanel.DrawText(sBuffer);
+        }
+    }
+    hPanel.DrawText(" ");
+
+	SetPanelCurrentKey(hPanel, g_iExitBackButtonSlot);
+	FormatEx(SZF(sBuffer), "%t", "menu: back");
+	DrawPanelItem(hPanel, sBuffer);
+
+	DrawPanelText(hPanel, " ");
+
+	SetPanelCurrentKey(hPanel, g_iExitButtonSlot);
+	FormatEx(SZF(sBuffer), "%t", "menu: exit");
+	DrawPanelItem(hPanel, sBuffer);
+    hPanel.Send(iClient, HandlerOfPanel, MENU_TIME_FOREVER);
+    CloseHandle(hPanel);
+}
+
 public void DisplayInProgressMenu(int iClient, int iTarget, int iItem)
 {
 	if ( !g_hInProgressMenu[iTarget] ) {
-		PrintToChat(iClient, "%t", "client is not loaded");
+		char sMessage[128];
+		FormatEx(sMessage,sizeof sMessage,"%t", "client is not loaded");
+		A_PrintToChat(iClient, sMessage);
 		
 		if ( iTarget == iClient ) {
 			DisplayAchivementsMenu(iClient);
@@ -169,7 +216,9 @@ public void DisplayInProgressMenu(int iClient, int iTarget, int iItem)
 public void DisplayCompletedMenu(int iClient, int iTarget, int iItem)
 {
 	if ( !g_hCompletedMenu[iTarget] ) {
-		PrintToChat(iClient, "%t", "client is not loaded");
+		char sMessage[128];
+		FormatEx(sMessage,sizeof sMessage,"%t", "client is not loaded");
+		A_PrintToChat(iClient, sMessage);
 		
 		if ( iTarget == iClient ) {
 			DisplayAchivementsMenu(iClient);
