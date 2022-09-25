@@ -17,14 +17,14 @@
 	}
 	"achievements menu: top"
 	{
-		"ru"				"Топ игроков"
+		"ru"				"ТОП игроков"
 		"en"				"Top Players"
 	}
 	
 	"top menu: title"
 	{
-		"ru"				"Топ 10-Игроков по выполненным достижениям"
-		"en"				"Top 10 players by completed achievements"
+		"ru"				"ТОП 10 | Выполенных достижений"
+		"en"				"Top 10 | Completed Achievements"
 	}
 	"players menu: title"
 	{
