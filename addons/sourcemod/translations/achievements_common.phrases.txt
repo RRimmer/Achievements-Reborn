@@ -2,23 +2,30 @@
 {
 	"achievements menu: title"
 	{
-		"#format"			""
 		"ru"				"Достижения:\n "
 		"en"				"Achievements:\n "
 	}
 	"achievements menu: own achievements"
 	{
-		"#format"			""
 		"ru"				"Ваши достижения"
 		"en"				"Your achievements"
 	}
 	"achievements menu: players achievements"
 	{
-		"#format"			""
-		"ru"				"Достижения игроков"
-		"en"				"Players achievements"
+		"ru"				"Достижения игроков\n \n"
+		"en"				"Players achievements\n \n"
+	}
+	"achievements menu: top"
+	{
+		"ru"				"ТОП игроков"
+		"en"				"Top Players"
 	}
 	
+	"top menu: title"
+	{
+		"ru"				"ТОП 10 | Выполенных достижений"
+		"en"				"Top 10 | Completed Achievements"
+	}
 	"players menu: title"
 	{
 		"#format"			""
@@ -132,24 +139,24 @@
 		"ru"				"Выход"
 		"en"				"Exit"
 	}
-	
+
 	"client got achievement"
 	{
 		"#format"			"{1:s},{2:s}"
-		"ru"				"Игрок {1} выполнил достижение {2}"
-		"en"				"Player {1} got achievement {2}"
+		"ru"				"Игрок {RED}{1} {GREEN}выполнил достижение {RED}{2}"
+		"en"				"Player {RED}{1} {GREEN}got achievement {RED}{2}"
 	}
 	
 	"you got achievement: chat"
 	{
 		"#format"			"{1:s}"
-		"ru"				"Вы успешно выполнили достижение {1}"
+		"ru"				"Вы успешно выполнили достижение {RED}{1}"
 	}
 	
 	"you got achievement: center"
 	{
 		"#format"			"{1:s}"
-		"ru"				"Вы успешно выполнили достижение {1}"
+		"ru"				"Вы успешно выполнили достижение {RED}{1}"
 	}
 	
 	"you got achievement: alert"
