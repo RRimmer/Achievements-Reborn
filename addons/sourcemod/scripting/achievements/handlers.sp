@@ -1,7 +1,6 @@
-int 
-	g_iViewTarget[MPS],
-	g_iLastMenuType[MPS],
-	g_iLastMenuSelection[MPS];
+int g_iViewTarget[MPS];
+int	g_iLastMenuType[MPS];
+int	g_iLastMenuSelection[MPS];
 
 public int Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
@@ -29,6 +28,7 @@ public int Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, i
 			CloseHandle(hMenu);
 		}
 	}
+	return 0;
 }
 
 public int Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
@@ -63,6 +63,7 @@ public int Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int i
 			CloseHandle(hMenu);
 		}
 	}
+	return 0;
 }
 
 public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
@@ -107,6 +108,7 @@ public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient
 			
 		}
 	}
+	return 0;
 }
 
 public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, int iSlot)
@@ -172,7 +174,6 @@ public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, 
 			}
 		}
 	}
-	
 	return 0;
 }
 
@@ -211,6 +212,7 @@ public int Handler_ShowAchievementDetails(Menu hMenu, MenuAction action, int iCl
 			}
 		}
 	}
+	return 0;
 }
 
 public int HandlerOfPanel(Menu hMenu, MenuAction action, int iClient, int iSlot)
@@ -226,4 +228,5 @@ public int HandlerOfPanel(Menu hMenu, MenuAction action, int iClient, int iSlot)
 			}
 		}
 	}
+	return 0;
 }

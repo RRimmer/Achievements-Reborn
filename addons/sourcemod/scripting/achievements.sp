@@ -14,7 +14,7 @@
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
 
-#define PLUGIN_VERSION "Beta 0.0.1"
+#define PLUGIN_VERSION "Beta 0.0.3"
 public Plugin myinfo =
 {
 	name 			= "[Achievements][Reborn] Core",
@@ -66,7 +66,8 @@ int iTriggerNum;
 //2 - Min Player
 //3 - Notifacation Type
 //4 - Server id
-int g_iSettings[5];
+//5 - Continue
+int g_iSettings[6];
 char g_sTag[128];
 bool IsRoundEnd,
 	g_bLoaded;
@@ -148,7 +149,7 @@ public void OnRound(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 		IsRoundEnd = false;
 }
 
-void Achievements_OnCoreLoaded()
+public void Achievements_OnCoreLoaded()
 {
 	g_bLoaded = true;
 	Call_StartForward(g_hCoreIsLoad);
@@ -176,16 +177,13 @@ public void OnAllPluginsLoaded()
 	LoadAchivements();
 }
 
-public void OnClientConnected(int iClient)
-{
-	if(!IsFakeClient(iClient))
-		g_hTrie_ClientProgress[iClient] = CreateTrie();
-}
-
 public void OnClientPostAdminCheck(int iClient)
 {
 	if(IsClientInGame(iClient) && !IsFakeClient(iClient))
+	{
+		g_hTrie_ClientProgress[iClient] = CreateTrie();
 		LoadClient(iClient);
+	}
 }
 
 public void OnClientDisconnect(int iClient)

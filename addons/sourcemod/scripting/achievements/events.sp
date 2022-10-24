@@ -1,21 +1,26 @@
 public void Event_ClientCallback(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 {
 	int iClient = CID(GetEventInt(hEvent, "userid"));
-	ProcessEvents(iClient, hEvent, sEventName);
+	ProcessEvents(iClient, hEvent, sEventName, false);
 }
 
 public void Event_AttackerCallback(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 {
 	int iClient = CID(GetEventInt(hEvent, "attacker"));
 	if ( iClient > 0 && iClient <= MaxClients ) {
-		ProcessEvents(iClient, hEvent, sEventName);
+		ProcessEvents(iClient, hEvent, sEventName, true);
 	}
 }
 
-void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
+void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAttacker)
 {
 	Handle hEventArray;
-	if (IsFakeClient(iClient) || !GetTrieValue(g_hTrie_EventAchievements, sEventName, hEventArray) ) {
+	int iTarget;
+	if(bAttacker)
+		iTarget = CID(GetEventInt(hEvent, "userid"));
+	else
+		iTarget = CID(GetEventInt(hEvent, "attacker"));
+	if (!IsClientInGame(iClient) || IsFakeClient(iClient) || !GetTrieValue(g_hTrie_EventAchievements, sEventName, hEventArray) || iTarget == iClient) {
 		return;
 	}
 
@@ -33,7 +38,8 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 	char 
 		sName[64],
 		sBuffer[256],
-		sParts[8][256];
+		sParts[8][256],
+		sLastEvent[MAXPLAYERS+1][32];
 	bool 
 		bUpdate,
 		bFlag; 
@@ -49,14 +55,17 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 			LogError("???");
 			continue;
 		}
-		
 		bFlag = true;
 		bUpdate = false;
 		iCount = 0;
 		
 		bUpdate = GetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
 		GetTrieValue(hAchievementData, "count", iBuffer);
-		
+		if((!strcmp(sLastEvent[iClient],sEventName) && g_iSettings[5]) || iCount == -1)
+			continue;
+
+		FormatEx(sLastEvent[iClient],sizeof sLastEvent[],sEventName);
+
 		if(iCount < iBuffer && iCount != -1) {
 			GetTrieString(hAchievementData, "condition", SZF(sBuffer));
 			iParts = ExplodeString(sBuffer, ";", sParts, sizeof(sParts), sizeof(sParts[]));
@@ -121,6 +130,7 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName)
 			}
 		}
 	}
+	sLastEvent[iClient][0] = 0; 
 }
 
 void AlertText(int iClient, const char[] sMessage, any ...)
@@ -187,13 +197,14 @@ bool CheckCondition(char[] sCondition, Handle hEvent)
 				if ( partsCount == 1 ) {
 					char eventValue[16];
 					GetEventString(hEvent, sConditionParts[0], SZF(eventValue));
-					return (!strcmp(eventValue, sConditionParts[2]));
+					if(StrContains(eventValue,sConditionParts[2],false) != -1) return true;
+					else return false;
 				}
 				else {
 					char eventValue[16];
 					GetEventString(hEvent, sConditionParts[0], SZF(eventValue));
 					for ( int i = 0; i < partsCount; ++i ) {
-						if ( !strcmp(eventValue, sParts[i]) ) {
+						if (StrContains(eventValue,sParts[i],false) != -1) {
 							return true;
 						}
 					}

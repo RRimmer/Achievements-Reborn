@@ -86,7 +86,6 @@ void CreateTables()
 
 	Achievements_OnCoreLoaded();
 	LC(i) {
-		OnClientConnected(i);
 		OnClientPostAdminCheck(i);
 	}
 }
