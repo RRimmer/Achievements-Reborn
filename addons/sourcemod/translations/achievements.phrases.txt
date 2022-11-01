@@ -24,7 +24,6 @@
 	"Killer I: name"
 	{
 		"ru"				"Убийца I"
-		"en"				"Killer I"
 	}
 	"Killer I: description"
 	{
@@ -33,14 +32,12 @@
 	}
 	"Killer I: reward"
 	{
-		"ru"				"5 кредитов"
-		"en"				"5 credits"
+		"ru"				"5 кредитов и 5 опыта"
 	}
 	
 	"Killer II: name"
 	{
 		"ru"				"Убийца II"
-		"en"				"Killer II"
 	}
 	"Killer II: description"
 	{
@@ -49,14 +46,12 @@
 	}
 	"Killer II: reward"
 	{
-		"ru"				"30 кредитов"
-		"en"				"30 credits"
+		"ru"				"30 кредитов и 30 опыта"
 	}
 	
 	"Killer III: name"
 	{
 		"ru"				"Убийца III"
-		"en"				"Killer III"
 	}
 	"Killer III: description"
 	{
@@ -65,14 +60,12 @@
 	}
 	"Killer III: reward"
 	{
-		"ru"				"50 кредитов"
-		"en"				"50 credits"
+		"ru"				"50 кредитов и 50 опыта"
 	}
 	
 	"Killer IV: name"
 	{
 		"ru"				"Убийца IV"
-		"en"				"Killer IV"
 	}
 	"Killer IV: description"
 	{
@@ -81,14 +74,12 @@
 	}
 	"Killer IV: reward"
 	{
-		"ru"				"150 кредитов"
-		"en"				"150 credits"
+		"ru"				"150 кредитов и 100 опыта"
 	}
 	
 	"Killer V: name"
 	{
 		"ru"				"Убийца V"
-		"en"				"Killer V"
 	}
 	"Killer V: description"
 	{
@@ -97,14 +88,12 @@
 	}
 	"Killer V: reward"
 	{
-		"ru"				"450 кредитов"
-		"en"				"450 credits"
+		"ru"				"450 кредитов и 200 опыта"
 	}
 	
 	"Killer VI: name"
 	{
 		"ru"				"Убийца VI"
-		"en"				"Killer VI"
 	}
 	"Killer VI: description"
 	{
@@ -113,14 +102,12 @@
 	}
 	"Killer VI: reward"
 	{
-		"ru"				"950 кредитов"
-		"en"				"950 credits"
+		"ru"				"950 кредитов и 300 опыта"
 	}
 	
 	"Killer VII: name"
 	{
 		"ru"				"Убийца VII"
-		"en"				"Killer VII"
 	}
 	"Killer VII: description"
 	{
@@ -129,14 +116,12 @@
 	}
 	"Killer VII: reward"
 	{
-		"ru"				"1450 кредитов"
-		"en"				"1450 credits"
+		"ru"				"1450 кредитов и 499 опыта"
 	}
 	
 	"Killer VIII: name"
 	{
 		"ru"				"Убийца VIII"
-		"en"				"Killer VIII"
 	}
 	"Killer VIII: description"
 	{
@@ -145,14 +130,12 @@
 	}
 	"Killer VIII: reward"
 	{
-		"ru"				"2000 кредитов"
-		"en"				"2000 credits"
+		"ru"				"2000 кредитов и 666 опыта"
 	}
 	
 	"Killer IX: name"
 	{
 		"ru"				"Убийца IX"
-		"en"				"Killer IX"
 	}
 	"Killer IX: description"
 	{
@@ -161,14 +144,12 @@
 	}
 	"Killer IX: reward"
 	{
-		"ru"				"2750 кредитов"
-		"en"				"2750 credits"
+		"ru"				"2750 кредитов и 800 опыта"
 	}
 	
 	"Killer X: name"
 	{
 		"ru"				"Убийца X"
-		"en"				"Killer X"
 	}
 	"Killer X: description"
 	{
@@ -177,7 +158,286 @@
 	}
 	"Killer X: reward"
 	{
-		"ru"				"5000 кредитов"
-		"en"				"5000 credits"
+		"ru"				"5000 кредитов и 1000 опыта"
+	}
+	
+	"Sniper I: name"
+	{
+		"ru"				"Снайпер I"
+	}
+	"Sniper I: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper I: reward"
+	{
+		"ru"				"10 кредитов и 5 опыта"
+	}
+	
+	"Sniper II: name"
+	{
+		"ru"				"Снайпер II"
+	}
+	"Sniper II: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper II: reward"
+	{
+		"ru"				"40 кредитов и 10 опыта"
+	}
+	
+	"Sniper III: name"
+	{
+		"ru"				"Снайпер III"
+	}
+	"Sniper III: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper III: reward"
+	{
+		"ru"				"60 кредитов и 25 опыта"
+	}
+	
+	"Sniper IV: name"
+	{
+		"ru"				"Снайпер IV"
+	}
+	"Sniper IV: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper IV: reward"
+	{
+		"ru"				"120 кредитов и 50 опыта"
+	}
+	
+	"Sniper V: name"
+	{
+		"ru"				"Снайпер V"
+	}
+	"Sniper V: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper V: reward"
+	{
+		"ru"				"200 кредитов и 75 опыта"
+	}
+	
+	"Sniper VI: name"
+	{
+		"ru"				"Снайпер VI"
+	}
+	"Sniper VI: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper VI: reward"
+	{
+		"ru"				"400 кредитов и 125 опыта"
+	}
+	
+	"Sniper VII: name"
+	{
+		"ru"				"Снайпер VII"
+	}
+	"Sniper VII: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper VII: reward"
+	{
+		"ru"				"800 кредитов и 200 опыта"
+	}
+	
+	"Sniper VIII: name"
+	{
+		"ru"				"Снайпер VIII"
+	}
+	"Sniper VIII: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper VIII: reward"
+	{
+		"ru"				"1500 кредитов и 400 опыта"
+	}
+	
+	"Sniper IX: name"
+	{
+		"ru"				"Снайпер IX"
+	}
+	"Sniper IX: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper IX: reward"
+	{
+		"ru"				"3000 кредитов и 600 опыта"
+	}
+	
+	"Sniper X: name"
+	{
+		"ru"				"Снайпер X"
+	}
+	"Sniper X: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с любой снайперки"
+	}
+	"Sniper X: reward"
+	{
+		"ru"				"5000 кредитов и 1500 опыта"
+	}
+	
+	"Butcher I: name"
+	{
+		"ru"				"Мясник I"
+	}
+	"Butcher I: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher I: reward"
+	{
+		"ru"				"20 кредитов и 10 опыта"
+	}
+	
+	"Butcher II: name"
+	{
+		"ru"				"Мясник II"
+	}
+	"Butcher II: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher II: reward"
+	{
+		"ru"				"50 кредитов и 35 опыта"
+	}
+	
+	"Butcher III: name"
+	{
+		"ru"				"Мясник III"
+	}
+	"Butcher III: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher III: reward"
+	{
+		"ru"				"150 кредитов и 65 опыта"
+	}
+	
+	"Butcher IV: name"
+	{
+		"ru"				"Мясник IV"
+	}
+	"Butcher IV: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher IV: reward"
+	{
+		"ru"				"230 кредитов и 90 опыта"
+	}
+	
+	"Butcher V: name"
+	{
+		"ru"				"Мясник V"
+	}
+	"Butcher V: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher V: reward"
+	{
+		"ru"				"350 кредитов и 150 опыта"
+	}
+	
+	"Butcher VI: name"
+	{
+		"ru"				"Мясник VI"
+	}
+	"Butcher VI: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher VI: reward"
+	{
+		"ru"				"500 кредитов и 240 опыта"
+	}
+	
+	"Butcher VII: name"
+	{
+		"ru"				"Мясник VII"
+	}
+	"Butcher VII: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher VII: reward"
+	{
+		"ru"				"700 кредитов и 404 опыта"
+	}
+	
+	"Butcher VIII: name"
+	{
+		"ru"				"Мясник VIII"
+	}
+	"Butcher VIII: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher VIII: reward"
+	{
+		"ru"				"1000 кредитов и 500 опыта"
+	}
+	
+	"Butcher IX: name"
+	{
+		"ru"				"Мясник IX"
+	}
+	"Butcher IX: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher IX: reward"
+	{
+		"ru"				"1500 кредитов и 700 опыта"
+	}
+	
+	"Butcher X: name"
+	{
+		"ru"				"Мясник X"
+	}
+	"Butcher X: description"
+	{
+		"#format"			"{1:d}"
+		"ru"				"Убейте {1} игроков с ножа"
+	}
+	"Butcher X: reward"
+	{
+		"ru"				"2500 кредитов и 1200 опыта"
 	}
 }
