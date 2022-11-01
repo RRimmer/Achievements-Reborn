@@ -1,25 +1,37 @@
 void GiveReward(int iClient, const char[] sName)
 {
 	Handle hAchievementData;
-	char sTrigger[64],sOutcome[64],sIndexTrigger[12];
+	char sTrigger[8][64], sTriggers[256], sOutcomes[256],sOutcome[8][64],sIndexTrigger[12];
 	GetTrieValue(g_hTrie_AchievementData, sName, hAchievementData);
 	
-	GetTrieString(hAchievementData, "trigger", SZF(sTrigger));
-	GetTrieString(hAchievementData, "outcome", SZF(sOutcome));
-	hTriggers.GetString(sTrigger,SZF(sIndexTrigger));
-	int iIndex = StringToInt(sIndexTrigger);
-	Handle hPlugin = g_eTriggers[iIndex].hPlugin;
-	Function fncCallback = g_eTriggers[iIndex].fncCallback;
-	
-	if(fncCallback)
+	GetTrieString(hAchievementData, "trigger", SZF(sTriggers));
+	GetTrieString(hAchievementData, "outcome", SZF(sOutcomes));
+
+	int iCountTriggers = ExplodeString(sTriggers, ";", sTrigger, sizeof(sTrigger), sizeof(sTrigger[]));
+	int iCountOutcome = ExplodeString(sOutcomes, ";", sOutcome, sizeof(sOutcome), sizeof(sOutcome[]));
+	if(iCountTriggers != iCountOutcome)
 	{
-		Call_StartFunction(hPlugin, fncCallback);
-		Call_PushCell(iClient);
-		Call_PushString(sOutcome);
-		Call_Finish();
+		LogError("В призе достижения %s совершена ошибка",sName);
+		return;
 	}
-	else
+	int iIndex;
+	for(int i = 0; i <= iCountOutcome; i++)
 	{
-		LogError("Achievements: Trigger not found[%s]",sName);
+		hTriggers.GetString(sTrigger[i],SZF(sIndexTrigger));
+		iIndex = StringToInt(sIndexTrigger);
+		Handle hPlugin = g_eTriggers[iIndex].hPlugin;
+		Function fncCallback = g_eTriggers[iIndex].fncCallback;
+		
+		if(fncCallback)
+		{
+			Call_StartFunction(hPlugin, fncCallback);
+			Call_PushCell(iClient);
+			Call_PushString(sOutcome[i]);
+			Call_Finish();
+		}
+		else
+		{
+			LogError("Achievements: Trigger not found[%s]",sTrigger[i]);
+		}
 	}
 }

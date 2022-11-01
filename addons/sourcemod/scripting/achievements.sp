@@ -14,7 +14,7 @@
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
 
-#define PLUGIN_VERSION "Beta 0.0.2"
+#define PLUGIN_VERSION "Beta 0.0.3"
 public Plugin myinfo =
 {
 	name 			= "[Achievements][Reborn] Core",
@@ -59,14 +59,15 @@ enum struct eTriggers
 	Function fncCallback;
 }
 eTriggers g_eTriggers[64];
-int iTriggerNum;
+int iTriggerNum = 0;
 
 //0 - Разминка(bool)
 //1 - Конец раунда(bool)
 //2 - Min Player
 //3 - Notifacation Type
 //4 - Server id
-int g_iSettings[5];
+//5 - Continue
+int g_iSettings[6];
 char g_sTag[128];
 bool IsRoundEnd,
 	g_bLoaded;
@@ -148,7 +149,7 @@ public void OnRound(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 		IsRoundEnd = false;
 }
 
-void Achievements_OnCoreLoaded()
+public void Achievements_OnCoreLoaded()
 {
 	g_bLoaded = true;
 	Call_StartForward(g_hCoreIsLoad);
@@ -176,21 +177,18 @@ public void OnAllPluginsLoaded()
 	LoadAchivements();
 }
 
-public void OnClientConnected(int iClient)
-{
-	if(!IsFakeClient(iClient))
-		g_hTrie_ClientProgress[iClient] = CreateTrie();
-}
-
 public void OnClientPostAdminCheck(int iClient)
 {
 	if(IsClientInGame(iClient) && !IsFakeClient(iClient))
+	{
+		g_hTrie_ClientProgress[iClient] = CreateTrie();
 		LoadClient(iClient);
+	}
 }
 
 public void OnClientDisconnect(int iClient)
 {
-	CloseHandle(g_hTrie_ClientProgress[iClient]);
+	if(g_hTrie_ClientProgress[iClient]) CloseHandle(g_hTrie_ClientProgress[iClient]);
 }
 
 // ==============================================================================================================================
@@ -216,4 +214,9 @@ public void A_PrintToChatAll(const char[] sMessage) {
         case Engine_CSS: CPrintToChatAll("%s %s", g_sTag, sMessage);
         case Engine_CSGO: CGOPrintToChatAll("%s %s", g_sTag, sMessage);
     }
+}
+
+public void OnMapEnd()
+{
+	iTriggerNum = 0;
 }

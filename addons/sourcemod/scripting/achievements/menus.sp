@@ -244,8 +244,9 @@ public void DisplayAchivementDetailsMenu(int iClient, int iTarget, const char[] 
 		return;
 	}
 	
-	int iCount = (GetTrieValue(hAchievementData, "count", iCount)?iCount:-1);
-	
+	int iCount;
+	iCount = GetTrieValue(hAchievementData, "count", iCount)?iCount:-1;
+
 	Handle hPanel = CreatePanel();
 	
 	char sClientName[32];

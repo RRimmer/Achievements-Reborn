@@ -7,6 +7,7 @@ public int Native_RegTrigger(Handle hPlugin, int iNumParams)
 	GetNativeString(1,sResult,sizeof sResult);
 	IntToString(iTriggerNum,sIndex,sizeof sIndex);
 	hTriggers.SetString(sResult,sIndex);
+	return 0;
 }
 
 public int Native_CoreIsLoad(Handle hPlugin, int iParams)
