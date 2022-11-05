@@ -110,7 +110,7 @@ void LoadClient(int iClient)
 		GetClientAuthId(iClient, AuthId_Steam2, g_sAuth[iClient], sizeof(g_sAuth));
 		
 		char sQuery[256];
-		FormatEx(SZF(sQuery), "SELECT `id` FROM `clients` WHERE `auth` = '%s' AND `server_id` = '%i' LIMIT 1;", g_sAuth[iClient], g_iSettings[4]);
+		g_hSQLdb.Format(SZF(sQuery), "SELECT `id` FROM `clients` WHERE `auth` = '%s' AND `server_id` = '%i' LIMIT 1;", g_sAuth[iClient], g_iSettings[4]);
 		SQL_TQuery(g_hSQLdb, SQLT_OnLoadClient, sQuery, UID(iClient));
 	}
 }
@@ -131,7 +131,7 @@ public void SQLT_OnLoadClient(Handle hOwner, Handle hQuery, const char[] sError,
 	}
 	else {
 		char sQuery[256];
-		FormatEx(SZF(sQuery), "INSERT INTO `clients` (`auth`,`server_id`,`name`) VALUES ('%s', '%i','%N')", g_sAuth[iClient],g_iSettings[4],iClient);
+		g_hSQLdb.Format(SZF(sQuery), "INSERT INTO `clients` (`auth`,`server_id`,`name`) VALUES ('%s', '%i','%N')", g_sAuth[iClient],g_iSettings[4],iClient);
 		SQL_TQuery(g_hSQLdb, SQLT_OnSaveClient, sQuery, iUserId);
 	}
 }
@@ -152,7 +152,7 @@ public void SQLT_OnSaveClient(Handle hOwner, Handle hQuery, const char[] sError,
 void LoadProgress(int iClient)
 {
 	char sQuery[256];
-	FormatEx(SZF(sQuery), "SELECT `achievement`, `count` FROM `progress` WHERE `client_id` = %d AND `server_id`;", g_iClientId[iClient],g_iSettings[4]);
+	g_hSQLdb.Format(SZF(sQuery), "SELECT `achievement`, `count` FROM `progress` WHERE `client_id` = %d AND `server_id`;", g_iClientId[iClient],g_iSettings[4]);
 	SQL_TQuery(g_hSQLdb, SQLT_OnLoadProgress, sQuery, UID(iClient));
 }
 
@@ -184,11 +184,11 @@ void SaveProgress(int iClient, const char[] sName, bool bUpdate)
 	
 	char sQuery[256];
 	if ( bUpdate ) {
-		FormatEx(SZF(sQuery), "UPDATE `progress` SET `count` = %d WHERE `client_id` = %d AND `achievement` = '%s' AND `server_id` = '%i';", iCount, g_iClientId[iClient], sName,g_iSettings[4]);
+		g_hSQLdb.Format(SZF(sQuery), "UPDATE `progress` SET `count` = %d WHERE `client_id` = %d AND `achievement` = '%s' AND `server_id` = '%i';", iCount, g_iClientId[iClient], sName,g_iSettings[4]);
 		SQL_TQuery(g_hSQLdb, SQLT_OnUpdateProgress, sQuery);
 	}
 	else {
-		FormatEx(SZF(sQuery), "INSERT INTO `progress` (`client_id`, `achievement`, `count`, `server_id`) VALUES (%d, '%s', %d, %i);", g_iClientId[iClient], sName, iCount,g_iSettings[4]);
+		g_hSQLdb.Format(SZF(sQuery), "INSERT INTO `progress` (`client_id`, `achievement`, `count`, `server_id`) VALUES (%d, '%s', %d, %i);", g_iClientId[iClient], sName, iCount,g_iSettings[4]);
 		SQL_TQuery(g_hSQLdb, SQLT_OnInsertProgress, sQuery);
 	}
 }
@@ -197,7 +197,7 @@ void SaveProgress(int iClient, const char[] sName, bool bUpdate)
 void SaveProgressCompleted(int iClient)
 {
 	char sQuery[256];
-	FormatEx(SZF(sQuery), "UPDATE `clients` SET `completed` = `completed`+ 1 WHERE `id` = %d AND `server_id` = '%i';", g_iClientId[iClient],g_iSettings[4]);
+	g_hSQLdb.Format(SZF(sQuery), "UPDATE `clients` SET `completed` = `completed`+ 1 WHERE `id` = %d AND `server_id` = '%i';", g_iClientId[iClient],g_iSettings[4]);
 	SQL_TQuery(g_hSQLdb, SQLT_OnUpdateProgress, sQuery);
 }
 
@@ -218,6 +218,6 @@ public void SQLT_OnUpdateProgress(Handle hOwner, Handle hQuery, const char[] sEr
 public void DisplayPlayersTopMenu(int iClient)
 {
 	char query[256];
-	FormatEx(query, sizeof(query), "SELECT `name`, `completed` FROM `clients` ORDER BY `completed` DESC LIMIT 10;");
+	g_hSQLdb.Format(query, sizeof(query), "SELECT `name`, `completed` FROM `clients` ORDER BY `completed` DESC LIMIT 10;");
 	g_hSQLdb.Query(SQL_Callback_TopPlayers, query, GetClientUserId(iClient));
 }
