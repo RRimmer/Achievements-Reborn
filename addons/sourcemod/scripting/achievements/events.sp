@@ -24,13 +24,13 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 		return;
 	}
 
-	if(!g_iSettings[0] && GameRules_GetProp("m_bWarmupPeriod")){
+	if(g_EngineVersion == Engine_CSGO && !g_iSettings[0] && GameRules_GetProp("m_bWarmupPeriod")){
 		return;
 	}
 	if(!g_iSettings[1] && IsRoundEnd){
 		return;	
 	}
-	if(GetClientCount() < g_iSettings[2]){
+	if(GetNiggers() <= g_iSettings[2]){
 		return;
 	}
 	
@@ -146,6 +146,15 @@ void AlertText(int iClient, const char[] sMessage, any ...)
 		hEvent.FireToClient(iClient);
 		hEvent.Cancel();
 	}
+}
+
+stock int GetNiggers()
+{
+    int b = 0;
+    for(int i = 1; i <= MaxClients; i++)
+        if(IsClientInGame(i) && !IsFakeClient(i) && !IsClientSourceTV(i)) b++;
+ 
+    return b;
 }
 
 bool CheckCondition(char[] sCondition, Handle hEvent)

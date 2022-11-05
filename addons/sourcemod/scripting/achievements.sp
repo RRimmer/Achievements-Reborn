@@ -149,7 +149,7 @@ public void OnRound(Handle hEvent, const char[] sEventName, bool bDontBroadcast)
 		IsRoundEnd = false;
 }
 
-public void Achievements_OnCoreLoaded()
+public void Ach_OnCoreLoaded()
 {
 	g_bLoaded = true;
 	Call_StartForward(g_hCoreIsLoad);
@@ -188,7 +188,7 @@ public void OnClientPostAdminCheck(int iClient)
 
 public void OnClientDisconnect(int iClient)
 {
-	if(g_hTrie_ClientProgress[iClient]) CloseHandle(g_hTrie_ClientProgress[iClient]);
+	if(g_hTrie_ClientProgress[iClient]) delete g_hTrie_ClientProgress[iClient];
 }
 
 // ==============================================================================================================================

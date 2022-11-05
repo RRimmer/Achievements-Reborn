@@ -84,7 +84,7 @@ void CreateTables()
         SQL_UnlockDatabase(g_hSQLdb);
 	}
 
-	Achievements_OnCoreLoaded();
+	Ach_OnCoreLoaded();
 	LC(i) {
 		OnClientPostAdminCheck(i);
 	}
