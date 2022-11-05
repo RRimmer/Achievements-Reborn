@@ -14,7 +14,7 @@
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
 
-#define PLUGIN_VERSION "Beta 0.0.3"
+#define PLUGIN_VERSION "Beta 0.0.4"
 public Plugin myinfo =
 {
 	name 			= "[Achievements][Reborn] Core",
