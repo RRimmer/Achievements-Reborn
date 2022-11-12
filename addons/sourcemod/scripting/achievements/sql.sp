@@ -58,6 +58,13 @@ void CreateTables()
 																`count` INTEGER NOT NULL,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
+
+		FormatEx(query, sizeof(query),		"CREATE TABLE IF NOT EXISTS `ach_inventory` (\
+																`id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
+																`client_id` INTEGER NOT NULL,\
+																`ach_name` VARCHAR(64) NOT NULL,\
+																`server_id` INTEGER NOT NULL);");
+		g_hSQLdb.Query(SQL_CheckError, query);
 		g_hSQLdb.SetCharset("utf8");
 	}
 	else if(driver[0] == 's')
@@ -77,6 +84,14 @@ void CreateTables()
 																`client_id` INTEGER NOT NULL,\
 																`achievement` VARCHAR(64) NOT NULL,\
 																`count` INTEGER NOT NULL,\
+																`server_id` INTEGER NOT NULL);");
+
+		g_hSQLdb.Query(SQL_CheckError, query);
+
+		FormatEx(query, sizeof(query),		"CREATE TABLE IF NOT EXISTS `ach_inventory` (\
+																`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+																`client_id` INTEGER NOT NULL,\
+																`ach_name` VARCHAR(64) NOT NULL,\
 																`server_id` INTEGER NOT NULL);");
 
 		g_hSQLdb.Query(SQL_CheckError, query);
@@ -152,7 +167,7 @@ public void SQLT_OnSaveClient(Handle hOwner, Handle hQuery, const char[] sError,
 void LoadProgress(int iClient)
 {
 	char sQuery[256];
-	g_hSQLdb.Format(SZF(sQuery), "SELECT `achievement`, `count` FROM `progress` WHERE `client_id` = %d AND `server_id`;", g_iClientId[iClient],g_iSettings[4]);
+	g_hSQLdb.Format(SZF(sQuery), "SELECT `achievement`, `count` FROM `progress` WHERE `client_id` = %d AND `server_id` = %d;", g_iClientId[iClient],g_iSettings[4]);
 	SQL_TQuery(g_hSQLdb, SQLT_OnLoadProgress, sQuery, UID(iClient));
 }
 
@@ -193,6 +208,12 @@ void SaveProgress(int iClient, const char[] sName, bool bUpdate)
 	}
 }
 
+void RemoveReward(int iClient,char[] sInfo)
+{
+	char sQuery[256];
+	g_hSQLdb.Format(SZF(sQuery), "DELETE FROM `ach_inventory` WHERE `client_id` = '%d' AND `server_id` = '%d' AND `ach_name` = '%s';", g_iClientId[iClient],g_iSettings[4], sInfo);
+	g_hSQLdb.Query(SQLT_OnCheckError, sQuery);
+}
 
 void SaveProgressCompleted(int iClient)
 {
@@ -208,6 +229,28 @@ public void SQLT_OnInsertProgress(Handle hOwner, Handle hQuery, const char[] sEr
 	}
 }
 
+public void SQLT_OnCheckError(Handle hOwner, Handle hQuery, const char[]sError, any iUserId)
+{
+	if ( !hQuery ) {
+		LogError("SQLT_OnCheckError failure: \"%s\"", sError);
+		return;
+	}
+}
+
+void AddItemInventory(int iClient, char[] sName)
+{
+	char sQuery[256];
+	g_hSQLdb.Format(SZF(sQuery), "INSERT INTO `ach_inventory` (`client_id`,`ach_name`,`server_id`) VALUES ('%i', '%s', '%i')", g_iClientId[iClient], sName,g_iSettings[4]);
+	SQL_TQuery(g_hSQLdb, SQLT_AddInventoryItem, sQuery, UID(iClient));
+}
+
+public void SQLT_AddInventoryItem(Handle hOwner, Handle hQuery, const char[] sError, any hDatapack)
+{
+	if ( !hQuery ) {
+		LogError("SQLT_AddInventoryItem failure: \"%s\"", sError);
+	}
+}
+
 public void SQLT_OnUpdateProgress(Handle hOwner, Handle hQuery, const char[] sError, any hDatapack)
 {
 	if ( !hQuery ) {
@@ -220,4 +263,11 @@ public void DisplayPlayersTopMenu(int iClient)
 	char query[256];
 	g_hSQLdb.Format(query, sizeof(query), "SELECT `name`, `completed` FROM `clients` ORDER BY `completed` DESC LIMIT 10;");
 	g_hSQLdb.Query(SQL_Callback_TopPlayers, query, GetClientUserId(iClient));
+}
+
+public void DisplayInventory(int iClient)
+{
+	char sQuery[256];
+	g_hSQLdb.Format(SZF(sQuery), "SELECT `ach_name` FROM `ach_inventory` WHERE `client_id` = %d AND `server_id` = %d;", g_iClientId[iClient],g_iSettings[4]);
+	g_hSQLdb.Query(SQL_Callback_InventoryPlayers, sQuery, GetClientUserId(iClient));
 }

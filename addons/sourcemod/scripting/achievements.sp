@@ -13,7 +13,6 @@
 // ==============================================================================================================================
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
-
 #define PLUGIN_VERSION "Beta 0.0.4"
 public Plugin myinfo =
 {
@@ -67,7 +66,8 @@ int iTriggerNum = 0;
 //3 - Notifacation Type
 //4 - Server id
 //5 - Continue
-int g_iSettings[6];
+//6 - Reward(bool)
+int g_iSettings[7];
 char g_sTag[128];
 bool IsRoundEnd,
 	g_bLoaded;

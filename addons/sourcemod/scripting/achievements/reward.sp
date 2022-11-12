@@ -1,12 +1,23 @@
 void GiveReward(int iClient, const char[] sName)
 {
+	char sName2[64];
+	strcopy(SZF(sName2),sName);
+	if(!g_iSettings[6])
+		GetRewardInventory(iClient, sName2);
+	else
+		AddItemInventory(iClient, sName2);
+}
+
+void GetRewardInventory(int iClient, char[] sName)
+{
 	Handle hAchievementData;
-	char sTrigger[8][64], sTriggers[256], sOutcomes[256],sOutcome[8][64],sIndexTrigger[12];
+	char sTriggers[256], sOutcomes[256];
 	GetTrieValue(g_hTrie_AchievementData, sName, hAchievementData);
 	
 	GetTrieString(hAchievementData, "trigger", SZF(sTriggers));
 	GetTrieString(hAchievementData, "outcome", SZF(sOutcomes));
 
+	char sTrigger[8][64], sOutcome[8][64], sIndexTrigger[12];
 	int iCountTriggers = ExplodeString(sTriggers, ";", sTrigger, sizeof(sTrigger), sizeof(sTrigger[]));
 	int iCountOutcome = ExplodeString(sOutcomes, ";", sOutcome, sizeof(sOutcome), sizeof(sOutcome[]));
 	if(iCountTriggers != iCountOutcome)

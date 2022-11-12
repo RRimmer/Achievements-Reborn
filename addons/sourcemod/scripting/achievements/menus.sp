@@ -66,6 +66,8 @@ public void DisplayAchivementsMenu(int iClient)
 	SetMenuTitle(hMenu, "%t", "achievements menu: title");
 	
 	char sBuffer[64];
+	FormatEx(SZF(sBuffer), "%t\n \n", "achievements menu: inventory");
+	AddMenuItem(hMenu, "inventory", sBuffer);
 	FormatEx(SZF(sBuffer), "%t", "achievements menu: own achievements");
 	AddMenuItem(hMenu, "own", sBuffer);
 	FormatEx(SZF(sBuffer), "%t", "achievements menu: players achievements");
@@ -189,6 +191,44 @@ void SQL_Callback_TopPlayers(Database database, DBResultSet result, const char[]
 	DrawPanelItem(hPanel, sBuffer);
     hPanel.Send(iClient, HandlerOfPanel, MENU_TIME_FOREVER);
     CloseHandle(hPanel);
+}
+
+void SQL_Callback_InventoryPlayers(Database database, DBResultSet result, const char[] error, int iClient)
+{
+    if(result == null)
+    {
+        LogError("SQL_Callback_InventoryPlayers: %s", error);
+        return;
+    }
+
+    iClient = GetClientOfUserId(iClient);
+    if(!iClient) return;
+
+	
+    char sBuffer[64], sName[64];
+
+	int count = result.RowCount;
+	if(count == 0)
+	{
+		FormatEx(sBuffer,sizeof sBuffer,"%t", "InvEmpty");
+		A_PrintToChat(iClient, sBuffer);
+	}
+    Menu hMenu = new Menu(Handler_AchivementInvMenu);
+
+	hMenu.SetTitle("%t\n \n", "inventory menu: title");
+
+    for(int c = 1; c <= count; c++)
+    {
+        if(result.FetchRow())
+        {
+            result.FetchString(0, sName, sizeof(sName));
+			Format(SZF(sBuffer),"%s: reward",sName);
+            Format(sBuffer, sizeof(sBuffer), "%t", sBuffer);
+            hMenu.AddItem(sName,sBuffer);
+        }
+    }
+	hMenu.ExitBackButton = true;
+	hMenu.Display(iClient,0);
 }
 
 public void DisplayInProgressMenu(int iClient, int iTarget, int iItem)

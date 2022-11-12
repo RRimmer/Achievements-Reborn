@@ -35,6 +35,8 @@ void LoadAchivements()
 	g_iSettings[3] = KvGetNum(hKeyValues,"notification");
 	g_iSettings[4] = KvGetNum(hKeyValues,"server_id");
 	g_iSettings[5] = KvGetNum(hKeyValues,"continue");
+	g_iSettings[6] = KvGetNum(hKeyValues,"inv_thisorthat");
+
 	KvGetString(hKeyValues,"tag",g_sTag,sizeof g_sTag);
 
 	if(sCommands[0])

@@ -1,14 +1,19 @@
 "Phrases"
 {
-	"achievements menu: title"
+	//Главная страница
+	"achievements menu: inventory"
 	{
-		"ru"				"Достижения:\n "
-		"en"				"Achievements:\n "
+		"ru"				"Забрать награду"
 	}
 	"achievements menu: own achievements"
 	{
 		"ru"				"Ваши достижения"
 		"en"				"Your achievements"
+	}
+	"achievements menu: title"
+	{
+		"ru"				"Достижения:\n "
+		"en"				"Achievements:\n "
 	}
 	"achievements menu: players achievements"
 	{
@@ -20,12 +25,33 @@
 		"ru"				"ТОП игроков"
 		"en"				"Top Players"
 	}
+	"menu: back"
+	{
+		"#format"			""
+		"ru"				"Назад"
+		"en"				"Back"
+	}
+	"menu: exit"
+	{
+		"#format"			""
+		"ru"				"Выход"
+		"en"				"Exit"
+	}
 	
+	//Забрать награду (Инвентарь)
+	"inventory menu: title"
+	{
+		"ru"				"Ваши награды"
+	}
+
+	//TOP`ы
 	"top menu: title"
 	{
 		"ru"				"ТОП 10 | Выполенных достижений"
 		"en"				"Top 10 | Completed Achievements"
 	}
+
+	//Достижения других игроков
 	"players menu: title"
 	{
 		"#format"			""
@@ -44,7 +70,38 @@
 		"ru"				"Нет других игроков"
 		"en"				"No other players"
 	}
+	"achievements in progress menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Достижения в процессе у {1}:\n "
+		"en"				"{1}'s achievements in progress:\n "
+	}
+	"achievements in progress menu: empty"
+	{
+		"#format"			""
+		"ru"				"У игрока получены все достижения!"
+		"en"				"Player have all achievement!"
+	}
+	"completed achievements menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Завершённые достижения у {1}:\n "
+		"en"				"{1}'s completed achievements:\n "
+	}
+	"completed achievements menu: empty"
+	{
+		"#format"			""
+		"ru"				"У игрока пока нет достижений"
+		"en"				"Player don't have any achievements yet"
+	}
+	"achievement details menu: title"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Информация о достижении у {1}:\n "
+		"en"				"{1}'s achievement details:\n "
+	}
 	
+	//Ваши достижения
 	"achievements type menu: title"
 	{
 		"#format"			"{1:s}"
@@ -68,39 +125,6 @@
 		"#format"			""
 		"ru"				"Полученные достижения"
 		"en"				"Completed achievements"
-	}
-	
-	"achievements in progress menu: title"
-	{
-		"#format"			"{1:s}"
-		"ru"				"Достижения в процессе у {1}:\n "
-		"en"				"{1}'s achievements in progress:\n "
-	}
-	"achievements in progress menu: empty"
-	{
-		"#format"			""
-		"ru"				"У игрока получены все достижения!"
-		"en"				"Player have all achievement!"
-	}
-	
-	"completed achievements menu: title"
-	{
-		"#format"			"{1:s}"
-		"ru"				"Завершённые достижения у {1}:\n "
-		"en"				"{1}'s completed achievements:\n "
-	}
-	"completed achievements menu: empty"
-	{
-		"#format"			""
-		"ru"				"У игрока пока нет достижений"
-		"en"				"Player don't have any achievements yet"
-	}
-	
-	"achievement details menu: title"
-	{
-		"#format"			"{1:s}"
-		"ru"				"Информация о достижении у {1}:\n "
-		"en"				"{1}'s achievement details:\n "
 	}
 	"achievement details menu: name"
 	{
@@ -127,47 +151,37 @@
 		"en"				"Progress: {1}/{2} ({3}%%)"
 	}
 	
-	"menu: back"
-	{
-		"#format"			""
-		"ru"				"Назад"
-		"en"				"Back"
-	}
-	"menu: exit"
-	{
-		"#format"			""
-		"ru"				"Выход"
-		"en"				"Exit"
-	}
-
+	//Чат
 	"client got achievement"
 	{
 		"#format"			"{1:s},{2:s}"
-		"ru"				"Игрок {RED}{1} {GREEN}выполнил достижение {RED}{2}"
-		"en"				"Player {RED}{1} {GREEN}got achievement {RED}{2}"
+		"ru"				"Игрок {RED}{1} {LIGHTBLUE}выполнил достижение {RED}{2}"
+		"en"				"Player {RED}{1} {LIGHTBLUE}got achievement {RED}{2}"
 	}
-	
 	"you got achievement: chat"
 	{
 		"#format"			"{1:s}"
 		"ru"				"Вы успешно выполнили достижение {RED}{1}"
 	}
-	
 	"you got achievement: center"
 	{
 		"#format"			"{1:s}"
 		"ru"				"Вы успешно выполнили достижение {RED}{1}"
 	}
-	
-	"you got achievement: alert"
-	{
-		"#format"			"{1:s}"
-		"ru"				"Вы успешно выполнили достижение <font color='#FF0000'>{1}</font>"
-	}
-
 	"client is not loaded"
 	{
 		"ru"				"Данные о клиенте ещё не загружены. Пожалуйста, подождите"
 		"en"				"Client's data is not loaded. Please wait."
+	}
+	"InvEmpty"
+	{
+		"ru"				"Ваш инвентарь пуст"
+	}
+
+	//Алерт
+	"you got achievement: alert"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Вы успешно выполнили достижение <font color='#FF0000'>{1}</font>"
 	}
 }

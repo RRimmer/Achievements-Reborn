@@ -19,6 +19,9 @@ public int Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, i
 			else if ( strcmp(sInfo, "top") == 0 ) {
 				DisplayPlayersTopMenu(iClient);
 			}
+			else if ( strcmp(sInfo, "inventory") == 0 ) {
+				DisplayInventory(iClient);
+			}
 			else {
 				LogError("Invalid menu selection \"%s\" (slot %d)", sInfo, iSlot);
 			}
@@ -61,6 +64,26 @@ public int Handler_PlayersMenu(Menu hMenu, MenuAction action, int iClient, int i
 		
 		case MenuAction_End: {
 			CloseHandle(hMenu);
+		}
+	}
+	return 0;
+}
+
+public int Handler_AchivementInvMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
+{
+	switch ( action ) {
+		case MenuAction_Select: {
+			char sInfo[64];
+			GetMenuItem(hMenu, iSlot, SZF(sInfo));
+			GetRewardInventory(iClient,sInfo);
+			RemoveReward(iClient,sInfo);
+		}
+		case MenuAction_Cancel:
+		{
+			if (iSlot == MenuCancel_ExitBack)
+			{
+				DisplayAchivementsMenu(iClient);
+			}
 		}
 	}
 	return 0;
