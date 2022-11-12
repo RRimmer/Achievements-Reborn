@@ -4,6 +4,7 @@
 	"achievements menu: inventory"
 	{
 		"ru"				"Забрать награду"
+		"en"				"Collect the reward"
 	}
 	"achievements menu: own achievements"
 	{
@@ -42,6 +43,7 @@
 	"inventory menu: title"
 	{
 		"ru"				"Ваши награды"
+		"en"				"Your rewards"
 	}
 
 	//TOP`ы
@@ -162,11 +164,13 @@
 	{
 		"#format"			"{1:s}"
 		"ru"				"Вы успешно выполнили достижение {RED}{1}"
+		"en"				"You have successfully completed the achievement {RED}{1}"
 	}
 	"you got achievement: center"
 	{
 		"#format"			"{1:s}"
 		"ru"				"Вы успешно выполнили достижение {RED}{1}"
+		"en"				"You have successfully completed the achievement {RED}{1}"
 	}
 	"client is not loaded"
 	{
@@ -176,6 +180,7 @@
 	"InvEmpty"
 	{
 		"ru"				"Ваш инвентарь пуст"
+		"en"				"Your inventory is empty"
 	}
 
 	//Алерт
@@ -183,5 +188,6 @@
 	{
 		"#format"			"{1:s}"
 		"ru"				"Вы успешно выполнили достижение <font color='#FF0000'>{1}</font>"
+		"en"				"You have successfully completed the achievement <font color='#FF0000'>{1}</font>"
 	}
 }
