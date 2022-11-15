@@ -13,7 +13,7 @@
 // ==============================================================================================================================
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
-#define PLUGIN_VERSION "Beta 0.0.5"
+#define PLUGIN_VERSION "Beta 0.0.6"
 public Plugin myinfo =
 {
 	name 			= "[Achievements][Reborn] Core",
@@ -22,17 +22,6 @@ public Plugin myinfo =
 	version 		= PLUGIN_VERSION,
 	url 			= "https://hlmod.ru/resources/achievements-core.3936/"
 }
-// ==============================================================================================================================
-// >>> DEFINES
-// ==============================================================================================================================
-//#pragma newdecls required
-#define MPS 		MAXPLAYERS+1
-#define PMP 		PLATFORM_MAX_PATH
-#define MTF 		MENU_TIME_FOREVER
-#define CID(%0) 	GetClientOfUserId(%0)
-#define UID(%0) 	GetClientUserId(%0)
-#define SZF(%0) 	%0, sizeof(%0)
-#define LC(%0) 		for (int %0 = 1; %0 <= MaxClients; ++%0) if ( IsClientInGame(%0) ) 
 
 // ==============================================================================================================================
 // >>> CONSOLE VARIABLES
@@ -44,12 +33,18 @@ public Plugin myinfo =
 // ==============================================================================================================================		
 ArrayList g_hArray_sAchievementNames;			// array with names
 ArrayList g_hArray_sAchievementSound;
+Handle g_hKeyValues;
 Handle g_hTrie_AchievementData;			// name -> event, executor, condition, count, reward
 Handle g_hTrie_ClientProgress[MPS];		// name -> count
 Handle g_hTrie_EventAchievements;			// event -> array with achievement names
 EngineVersion g_EngineVersion;
 
-Handle g_hCoreIsLoad;
+Handle g_hCoreIsLoad,
+	g_hInvAddItem,
+	g_hRewardGiven,
+	g_hRewardGivenPost,
+	g_hEventWork,
+	g_hAchAddMenu;
 
 StringMap hTriggers = null;
 enum struct eTriggers
@@ -66,9 +61,10 @@ int iTriggerNum = 0;
 //3 - Notifacation Type
 //4 - Server id
 //5 - Continue
-//6 - Reward(bool)
+//6 - Reward_inv(bool)
 int g_iSettings[7];
-char g_sTag[128];
+char g_sTag[128],
+	g_sMapName[256];
 bool IsRoundEnd,
 	g_bLoaded;
 // panel stuff
@@ -113,9 +109,20 @@ int
 // ==============================================================================================================================
 public APLRes AskPluginLoad2(Handle hMySelf, bool bLate, char[] sError, int iErrorMax)
 {
-    CreateNative("Achievements_RegisterTrigger", Native_RegTrigger);
-	CreateNative("Achievements_CoreIsLoad", Native_CoreIsLoad);
+    CreateNative("Achievements_RegisterTrigger", 	Native_RegTrigger);
+	CreateNative("Achievements_CoreIsLoad", 		Native_CoreIsLoad);
+	CreateNative("Achievements_GetDatabase", 		Native_GetDatabase);
+	CreateNative("Achievements_GetKV", 				Native_GetKV);
+	CreateNative("Achievements_GetNames",			Native_GetEventNames);
+	CreateNative("Achievements_GetInfo",			Native_GetInfo);
+	CreateNative("Achievements_ReconstructMenu",	Native_ReconstructMenu);
+	CreateNative("Achievements_GetClientInfo",		Native_GetClientInfo);
 	g_hCoreIsLoad = CreateGlobalForward("Achievements_OnCoreLoaded", ET_Ignore);
+	g_hRewardGivenPost = CreateGlobalForward("Achievements_RewardGiven_Post", ET_Ignore, Param_Cell, Param_String);
+	g_hRewardGiven = CreateGlobalForward("Achievements_RewardGiven", ET_Ignore, Param_Cell, Param_String);
+	g_hInvAddItem = CreateGlobalForward("Achievements_InventoryItemAdd", ET_Ignore, Param_Cell, Param_String);
+	g_hEventWork = CreateGlobalForward("Achievements_Event", ET_Hook, Param_Cell, Param_String);
+	g_hAchAddMenu = CreateGlobalForward("Achievements_AddMenu", ET_Hook, Param_Cell, Param_String, Param_CellByRef);
 	RegPluginLibrary("achievements");
 	return APLRes_Success;
 }
@@ -170,6 +177,7 @@ public void OnMapStart()
 			PrecacheSound(sBuffer, true);
 		}
 	}
+	GetCurrentMap(g_sMapName,sizeof g_sMapName);
 }
 
 public void OnAllPluginsLoaded()

@@ -77,6 +77,7 @@ public int Handler_AchivementInvMenu(Menu hMenu, MenuAction action, int iClient,
 			GetMenuItem(hMenu, iSlot, SZF(sInfo));
 			GetRewardInventory(iClient,sInfo);
 			RemoveReward(iClient,sInfo);
+			DisplayInventory(iClient);
 		}
 		case MenuAction_Cancel:
 		{
@@ -136,35 +137,7 @@ public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient
 
 public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
-	switch ( action ) {
-		case MenuAction_DisplayItem: {
-			char sInfo[64];
-			GetMenuItem(hMenu, iSlot, SZF(sInfo));
-			
-			if ( sInfo[0] ) {
-				Format(SZF(sInfo), "%s: name", sInfo);
-				Format(SZF(sInfo), "%t", sInfo);
-			}
-			else {
-				switch (g_iLastMenuType[iClient]) {
-					case 1: {
-						FormatEx(SZF(sInfo), "%t", "achievements in progress menu: empty");
-					}
-					
-					case 2: {
-						FormatEx(SZF(sInfo), "%t", "completed achievements menu: empty");
-					}
-					
-					default: {
-						LogError("Invalid menu type %d", g_iLastMenuType[iClient]);
-						g_iLastMenuType[iClient] = 0;
-					}
-				}
-			}
-			
-			return RedrawMenuItem(sInfo);
-		}
-		
+	switch ( action ) {		
 		case MenuAction_Select: {
 			char sInfo[64];
 			GetMenuItem(hMenu, iSlot, SZF(sInfo));

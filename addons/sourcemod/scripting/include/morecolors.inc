@@ -4,7 +4,6 @@
 /* https://forums.alliedmods.net/showthread.php?t=96831 */
 /********************************************************/
 
-#pragma tabsize 0
 #pragma semicolon 1
 #pragma newdecls required
 
@@ -15,7 +14,7 @@
 
 #include <regex>
 
-#define MORE_COLORS_VERSION		"1.9.2"
+#define MORE_COLORS_VERSION		"1.9.2_fix"
 #define MAX_MESSAGE_LENGTH		256
 #define MAX_BUFFER_LENGTH		(MAX_MESSAGE_LENGTH * 4)
 
@@ -24,11 +23,9 @@
 #define COLOR_GRAY				0xCCCCCC
 #define COLOR_GREEN				0x3EFF3E
 
-#define GAME_DODS				0
-
 Handle g_hCTrie;
 bool g_bCSkipList[MAXPLAYERS + 1];
-char g_sCTeamColors[][] = {{0xCCCCCC, 0x4D7942, 0xFF4040}};
+int g_sCTeamColors[] = {0xCCCCCC, 0x4D7942, 0xFF4040};
 
 /**
  * Отправляет сообщение конкретному игроку в области чата
@@ -177,7 +174,7 @@ stock void CSendMessage(int iClient, const char[] szMessage, int iAuthor = 0) {
 				ReplaceString(szBuffer, sizeof szBuffer, "\x03", "\x04", false);
 			} else {
 				char szTemp[16];
-				Format(szTemp, sizeof szTemp, "\x07%06X", g_sCTeamColors[GAME_DODS][iTeam - 1]);
+				Format(szTemp, sizeof szTemp, "\x07%06X", g_sCTeamColors[iTeam - 1]);
 				ReplaceString(szBuffer, sizeof szBuffer, "\x03", szTemp, false);
 			}
 		}

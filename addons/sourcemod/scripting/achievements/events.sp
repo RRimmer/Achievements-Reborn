@@ -30,18 +30,17 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 	if(!g_iSettings[1] && IsRoundEnd){
 		return;	
 	}
-	if(GetNiggers() <= g_iSettings[2]){
-		return;
-	}
+	// if(GetNiggers() <= g_iSettings[2]){
+	// 	return;
+	// }
 	
 	Handle hAchievementData; 
 	char 
 		sName[64],
 		sBuffer[256],
 		sParts[8][256],
-		sLastEvent[MAXPLAYERS+1][32];
+		sLastEvent[MAXPLAYERS+1][256];
 	bool 
-		bUpdate,
 		bFlag; 
 	int 
 		iBuffer, 
@@ -56,18 +55,25 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 			continue;
 		}
 		bFlag = true;
-		bUpdate = false;
 		iCount = 0;
 		
-		bUpdate = GetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
+		Action action = Fwd_Event(iClient,sName);
+		if(action == Plugin_Handled)
+			continue;
+		GetTrieString(hAchievementData, "map", sBuffer,sizeof sBuffer);
+		if(sBuffer[0])
+			if(StrContains(g_sMapName,sBuffer) == -1)
+				continue;
+
+		GetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
 		GetTrieValue(hAchievementData, "count", iBuffer);
-		if((!strcmp(sLastEvent[iClient],sEventName) && g_iSettings[5]) || iCount == -1)
+		GetTrieString(hAchievementData, "condition", SZF(sBuffer));
+		if((g_iSettings[5] && !strcmp(sLastEvent[iClient],g_iSettings[5]==2?sBuffer:sEventName)) || iCount == -1)
 			continue;
 
-		FormatEx(sLastEvent[iClient],sizeof sLastEvent[],sEventName);
+		FormatEx(sLastEvent[iClient],sizeof sLastEvent[],g_iSettings[5]==2?sBuffer:sEventName);
 
 		if(iCount < iBuffer && iCount != -1) {
-			GetTrieString(hAchievementData, "condition", SZF(sBuffer));
 			iParts = ExplodeString(sBuffer, ";", sParts, sizeof(sParts), sizeof(sParts[]));
 
 			for(int l; l < iParts; l++)
@@ -78,10 +84,10 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 				}
 			}
 				
-			if ( bFlag ) {
+			if ( bFlag || !strcmp("none",sBuffer)) {
 				iCount++;
 				SetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
-				SaveProgress(iClient, sName, bUpdate);
+				SaveProgress(iClient, sName);
 
 				if ( iCount >= iBuffer ) {
 					char sTranslation[64],
@@ -122,7 +128,7 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 						EmitSoundToClient(iClient,sSound, _, SNDCHAN_STATIC,SNDLEVEL_NORMAL,SND_NOFLAGS,fVolume);
 					}
 					SetTrieValue(g_hTrie_ClientProgress[iClient], sName, -1);
-					SaveProgress(iClient, sName, bUpdate);
+					SaveProgress(iClient, sName);
 					SaveProgressCompleted(iClient);
 					GiveReward(iClient, sName);
 					CreateProgressMenu(iClient);
