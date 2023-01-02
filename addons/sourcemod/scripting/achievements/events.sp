@@ -30,9 +30,9 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 	if(!g_iSettings[1] && IsRoundEnd){
 		return;	
 	}
-	if(GetNiggers() <= g_iSettings[2]){
-		return;
-	}
+	// if(GetNiggers() <= g_iSettings[2]){
+	// 	return;
+	// }
 	
 	Handle hAchievementData; 
 	char 
@@ -131,7 +131,7 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 					SaveProgress(iClient, sName);
 					SaveProgressCompleted(iClient);
 					GiveReward(iClient, sName);
-					CreateProgressMenu(iClient);
+					CreateMenuGroups(iClient);
 				}
 			}
 		}

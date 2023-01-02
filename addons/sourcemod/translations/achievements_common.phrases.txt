@@ -154,6 +154,11 @@
 	}
 	
 	//Чат
+	"Achievements reward"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Вы получили награду в виде: {RED}{1}"
+	}
 	"client got achievement"
 	{
 		"#format"			"{1:s},{2:s}"

@@ -46,7 +46,7 @@ public int Native_GetInfo(Handle hPlugin, int iArgs)
 public int Native_ReconstructMenu(Handle hPlugin, int iArgs)
 {
 	int iClient = GetNativeCell(1);
-	CreateProgressMenu(iClient);
+	CreateMenuGroups(iClient);
 	return 0;
 }
 

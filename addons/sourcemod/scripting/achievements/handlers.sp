@@ -1,6 +1,7 @@
 int g_iViewTarget[MPS];
 int	g_iLastMenuType[MPS];
 int	g_iLastMenuSelection[MPS];
+int g_iLastGroup[MPS];
 
 public int Handler_AchivementsMenu(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
@@ -102,7 +103,7 @@ public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient
 				if ( iTarget ) {
 					if ( iSlot == 1 ) {
 						g_iLastMenuType[iClient] = 1;
-						DisplayInProgressMenu(iClient, iTarget,0);
+						DisplayInGroupsMenu(iClient, iTarget);
 					}
 					else if ( iSlot == 2 ) {
 						g_iLastMenuType[iClient] = 2;
@@ -135,6 +136,44 @@ public int Handler_AchivementTypeMenu(Menu hMenu, MenuAction action, int iClient
 	return 0;
 }
 
+public int Handler_ShowCompleteAchievements(Menu hMenu, MenuAction action, int iClient, int iSlot)
+{
+	switch ( action ) {		
+		case MenuAction_Select: {
+			char sInfo[64];
+			GetMenuItem(hMenu, iSlot, SZF(sInfo));
+			
+			int iTarget = CID(g_iViewTarget[iClient]);
+			if ( iTarget ) {
+				DisplayAchivementDetailsMenu(iClient, iTarget, sInfo);
+				g_iLastMenuSelection[iClient] = GetMenuSelectionPosition();
+			}
+			else {
+				char sMessage[128];
+				FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+				A_PrintToChat(iClient, sMessage);
+				DisplayPlayersMenu(iClient);
+			}
+		}
+		
+		case MenuAction_Cancel: {
+			if ( iSlot == MenuCancel_ExitBack ) {
+				int iTarget = CID(g_iViewTarget[iClient]);
+				if ( iTarget ) {
+					DisplayAchivementsTypeMenu(iClient,iTarget);
+				}
+				else {
+					char sMessage[128];
+					FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+					A_PrintToChat(iClient, sMessage);
+					DisplayPlayersMenu(iClient);
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, int iSlot)
 {
 	switch ( action ) {		
@@ -155,6 +194,36 @@ public int Handler_ShowAchievements(Menu hMenu, MenuAction action, int iClient, 
 			}
 		}
 		
+		case MenuAction_Cancel: {
+			if ( iSlot == MenuCancel_ExitBack ) {
+				int iTarget = CID(g_iViewTarget[iClient]);
+				if ( iTarget ) {
+					if(g_hTrie_GroupsAchievements != INVALID_HANDLE) DisplayInGroupsMenu(iClient,iTarget);
+					else DisplayAchivementsTypeMenu(iClient, iClient);
+				}
+				else {
+					char sMessage[128];
+					FormatEx(sMessage,sizeof sMessage,"%t", "players menu: player left");
+					A_PrintToChat(iClient, sMessage);
+					DisplayPlayersMenu(iClient);
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+public int Handler_ShowAchievementsGroup(Menu hMenu, MenuAction action, int iClient, int iSlot)
+{
+	switch ( action ) {
+		case MenuAction_Select: {
+			char sIndex[64],sBuffer[64];
+			Handle hData;
+			GetMenuItem(hMenu, iSlot, SZF(sIndex),_,SZF(sBuffer));
+			GetTrieValue(g_hTrie_GroupsAchievements,sIndex,hData);
+			GetTrieValue(hData,"index",g_iLastGroup[iClient]);
+			DisplayInProgressMenu(iClient, iClient, g_iLastGroup[iClient]);
+		}
 		case MenuAction_Cancel: {
 			if ( iSlot == MenuCancel_ExitBack ) {
 				int iTarget = CID(g_iViewTarget[iClient]);
@@ -183,7 +252,7 @@ public int Handler_ShowAchievementDetails(Menu hMenu, MenuAction action, int iCl
 				if ( iTarget ) {
 					switch (g_iLastMenuType[iClient]) {
 						case 1: {
-							DisplayInProgressMenu(iClient, iTarget, g_iLastMenuSelection[iClient]);
+							DisplayInProgressMenu(iClient, iTarget, g_iLastGroup[iClient]);
 						}
 						
 						case 2: {

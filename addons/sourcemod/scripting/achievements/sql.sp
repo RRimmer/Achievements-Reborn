@@ -51,7 +51,7 @@ void CreateTables()
 																`id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
 																`auth` VARCHAR(32) NOT NULL,\
 																`name` VARCHAR(64) NOT NULL,\
-																`completed` INTEGER NOT NULL,\
+																`completed` INTEGER NOT NULL DEFAULT 0,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
 
@@ -70,7 +70,7 @@ void CreateTables()
 																`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
 																`auth` VARCHAR(32) NOT NULL,\
 																`name` VARCHAR(64) NOT NULL,\
-																`completed` INTEGER NOT NULL,\
+																`completed` INTEGER NOT NULL DEFAULT 0,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
 
@@ -88,7 +88,7 @@ void CreateTables()
 	for(int i = 0; i <= g_hArray_sAchievementNames.Length-1; i++)
 	{
 		g_hArray_sAchievementNames.GetString(i,sBuffer,sizeof sBuffer);
-		g_hSQLdb.Format(SZF(query), "ALTER TABLE `ach_progress` ADD `%s` INTEGER NOT NULL;",sBuffer);
+		g_hSQLdb.Format(SZF(query), "ALTER TABLE `ach_progress` ADD `%s` INTEGER NOT NULL DEFAULT 0;",sBuffer);
 		g_hSQLdb.Query(SQL_CheckError2, query);
 	}
 	LC(i) {
@@ -181,7 +181,7 @@ public void SQLT_OnLoadProgress(Handle hOwner, Handle hQuery, const char[]sError
 		SetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
 	}
 	
-	if(g_hArray_sAchievementNames.Length == g_iCountAch[iClient])CreateProgressMenu(iClient);
+	if(g_hArray_sAchievementNames.Length == g_iCountAch[iClient])CreateMenuGroups(iClient);
 }
 
 void SaveProgress(int iClient, const char[] sName)

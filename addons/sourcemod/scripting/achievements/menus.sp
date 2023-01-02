@@ -1,24 +1,162 @@
-Handle g_hInProgressMenu[MPS];
+Handle g_hInProgressMenu[MPS][32];
+Handle g_hGroupsMenu[MPS];
 Handle g_hCompletedMenu[MPS];
 int g_iCompletedAchievements[MPS];
 
-public void CreateProgressMenu(int iClient)
+public void CreateMenuGroups(int iClient)
+{
+	if(g_hTrie_GroupsAchievements != INVALID_HANDLE)
+	{
+		if ( !g_hGroupsMenu[iClient] ) {
+			g_hGroupsMenu[iClient] = CreateMenu(Handler_ShowAchievementsGroup);
+			SetMenuExitBackButton(g_hGroupsMenu[iClient], true);
+		}
+		RemoveAllMenuItems(g_hGroupsMenu[iClient]);
+		Handle hTrie = CreateTrieSnapshot(g_hTrie_GroupsAchievements);
+		char szKey[32],sBuffer[64];
+		Handle hData;
+		int iBuffer;
+		for(int i = 0; i <= TrieSnapshotLength(hTrie)-1; i++)
+		{
+			GetTrieSnapshotKey(hTrie,i,SZF(szKey));
+			GetTrieValue(g_hTrie_GroupsAchievements,szKey,hData);
+			GetTrieValue(hData,"index",iBuffer);
+			IntToString(iBuffer,SZF(sBuffer));
+			AddMenuItem(g_hGroupsMenu[iClient],szKey, szKey);
+			CreateProgressMenu(iClient, szKey, iBuffer);
+		}
+		CreateCompletedMenu(iClient);
+	}
+	else
+	{
+		// create|clear menu from previos use
+		if ( !g_hInProgressMenu[iClient][0] ) {
+			g_hInProgressMenu[iClient][0] = CreateMenu(Handler_ShowAchievements);
+			SetMenuExitBackButton(g_hInProgressMenu[iClient][0], true);
+		}
+		RemoveAllMenuItems(g_hInProgressMenu[iClient][0]);
+		
+		// create|clear menu from previos use
+		if ( !g_hCompletedMenu[iClient] ) {
+			g_hCompletedMenu[iClient] = CreateMenu(Handler_ShowAchievements);
+			SetMenuExitBackButton(g_hCompletedMenu[iClient], true);
+		}
+		RemoveAllMenuItems(g_hCompletedMenu[iClient]);
+		
+		// create progress menu
+		g_iCompletedAchievements[iClient] = 0;
+		Handle hAchievementData; 
+		char sName[64],
+			sBuffer[64];
+		int	iCount, iBuffer;
+		for ( int i = 0; i < g_iTotalAchievements; ++i ) {
+			GetArrayString(g_hArray_sAchievementNames, i, SZF(sName));
+			FormatEx(SZF(sBuffer), "%s: name", sName);
+			Format(SZF(sBuffer), "%t", sBuffer);
+			if ( !GetTrieValue(g_hTrie_AchievementData, sName, hAchievementData) ) {
+				// this can't be, but maybe...
+				LogError("???");
+				continue;
+			}
+			
+			if ( GetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount) ) {
+				if ( !GetTrieValue(hAchievementData, "count", iBuffer) ) {
+					// this can't be, but maybe...
+					LogError("?!");
+					continue;
+				}
+				
+				if ( iCount == -1 ) {
+					AddMenuItem(g_hCompletedMenu[iClient], sName, sBuffer);
+					g_iCompletedAchievements[iClient]++;
+					continue;
+				}
+			}
+			
+			if(GetTrieValue(hAchievementData, "hide", iBuffer) && iBuffer == 0)
+			{
+				int iStyle;
+				Action result = Fwd_AddItem(iClient,sName,iStyle);
+				if(result == Plugin_Handled) continue;
+				AddMenuItem(g_hInProgressMenu[iClient][0], sName, sBuffer, iStyle?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+			}
+		}
+		
+		// if menu is empty
+		if ( GetMenuItemCount(g_hInProgressMenu[iClient][0]) == 0 ) {
+			
+			FormatEx(SZF(sBuffer), "%t", "achievements in progress menu: empty");
+			AddMenuItem(g_hInProgressMenu[iClient][0], "", sBuffer, ITEMDRAW_DISABLED);
+		}
+		
+		// if menu is empty
+		if ( GetMenuItemCount(g_hCompletedMenu[iClient]) == 0 ) {
+			FormatEx(SZF(sBuffer), "%t", "completed achievements menu: empty");
+			AddMenuItem(g_hCompletedMenu[iClient], "", sBuffer, ITEMDRAW_DISABLED);
+		}
+	}
+}
+
+public void CreateProgressMenu(int iClient, char[] sKey, int iIndex)
 {
 	// create|clear menu from previos use
-	if ( !g_hInProgressMenu[iClient] ) {
-		g_hInProgressMenu[iClient] = CreateMenu(Handler_ShowAchievements);
-		SetMenuExitBackButton(g_hInProgressMenu[iClient], true);
+	if ( !g_hInProgressMenu[iClient][iIndex] ) {
+		g_hInProgressMenu[iClient][iIndex] = CreateMenu(Handler_ShowAchievements);
+		SetMenuExitBackButton(g_hInProgressMenu[iClient][iIndex], true);
 	}
-	RemoveAllMenuItems(g_hInProgressMenu[iClient]);
+	RemoveAllMenuItems(g_hInProgressMenu[iClient][iIndex]);
 	
-	// create|clear menu from previos use
+	Handle hAchievementData; 
+	char sName[64],
+		sBuffer[64];
+	int	iCount, iBuffer;
+	for(int i = 0; i <= g_hArray_GroupAchievements[iIndex].Length-1; i++)
+	{
+		g_hArray_GroupAchievements[iIndex].GetString(i,SZF(sName));
+
+		FormatEx(SZF(sBuffer), "%s: name", sName);
+		Format(SZF(sBuffer), "%t", sBuffer);
+		if ( !GetTrieValue(g_hTrie_AchievementData, sName, hAchievementData) ) {
+			// this can't be, but maybe...
+			LogError("???");
+			continue;
+		}
+		
+		if ( GetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount) ) {
+			if ( !GetTrieValue(hAchievementData, "count", iBuffer) ) {
+				// this can't be, but maybe...
+				LogError("?!");
+				continue;
+			}
+			
+			if ( iCount == -1 ) continue;
+		}
+		
+		if(GetTrieValue(hAchievementData, "hide", iBuffer) && iBuffer == 0)
+		{
+			int iStyle;
+			Action result = Fwd_AddItem(iClient,sName,iStyle);
+			if(result == Plugin_Handled) continue;
+			AddMenuItem(g_hInProgressMenu[iClient][iIndex], sName, sBuffer, iStyle?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
+	}
+	
+	// if menu is empty
+	if ( GetMenuItemCount(g_hInProgressMenu[iClient][iIndex]) == 0 ) {
+		
+		FormatEx(SZF(sBuffer), "%t", "achievements in progress menu: empty");
+		AddMenuItem(g_hInProgressMenu[iClient][iIndex], "", sBuffer, ITEMDRAW_DISABLED);
+	}
+}
+
+public void CreateCompletedMenu(int iClient)
+{
 	if ( !g_hCompletedMenu[iClient] ) {
-		g_hCompletedMenu[iClient] = CreateMenu(Handler_ShowAchievements);
+		g_hCompletedMenu[iClient] = CreateMenu(Handler_ShowCompleteAchievements);
 		SetMenuExitBackButton(g_hCompletedMenu[iClient], true);
 	}
 	RemoveAllMenuItems(g_hCompletedMenu[iClient]);
 	
-	// create progress menu
 	g_iCompletedAchievements[iClient] = 0;
 	Handle hAchievementData; 
 	char sName[64],
@@ -47,21 +185,6 @@ public void CreateProgressMenu(int iClient)
 				continue;
 			}
 		}
-		
-		if(GetTrieValue(hAchievementData, "hide", iBuffer) && iBuffer == 0)
-		{
-			int iStyle;
-			Action result = Fwd_AddItem(iClient,sName,iStyle);
-			if(result == Plugin_Handled) continue;
-			AddMenuItem(g_hInProgressMenu[iClient], sName, sBuffer, iStyle?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
-		}
-	}
-	
-	// if menu is empty
-	if ( GetMenuItemCount(g_hInProgressMenu[iClient]) == 0 ) {
-		
-		FormatEx(SZF(sBuffer), "%t", "achievements in progress menu: empty");
-		AddMenuItem(g_hInProgressMenu[iClient], "", sBuffer, ITEMDRAW_DISABLED);
 	}
 	
 	// if menu is empty
@@ -242,9 +365,36 @@ void SQL_Callback_InventoryPlayers(Database database, DBResultSet result, const 
 	hMenu.Display(iClient,0);
 }
 
-public void DisplayInProgressMenu(int iClient, int iTarget, int iItem)
+public void DisplayInGroupsMenu(int iClient, int iTarget)
 {
-	if ( !g_hInProgressMenu[iTarget] ) {
+	if(g_hTrie_GroupsAchievements != INVALID_HANDLE)
+	{
+		if ( !g_hGroupsMenu[iTarget] ) {
+			char sMessage[128];
+			FormatEx(sMessage,sizeof sMessage,"%t", "client is not loaded");
+			A_PrintToChat(iClient, sMessage);
+			
+			if ( iTarget == iClient ) {
+				DisplayAchivementsMenu(iClient);
+			}
+			else {
+				DisplayPlayersMenu(iClient);
+			}
+		}
+		else {
+			char sName[32];
+			GetClientName(iTarget, SZF(sName));
+			SetMenuTitle(g_hGroupsMenu[iTarget], "%t", "achievements in progress menu: title", sName);
+			DisplayMenu(g_hGroupsMenu[iTarget], iClient, MTF);
+		}
+	}
+	else
+		DisplayInProgressMenu(iClient,iTarget,0);
+}
+
+public void DisplayInProgressMenu(int iClient, int iTarget, int i)
+{
+	if ( !g_hInProgressMenu[iTarget][i] ) {
 		char sMessage[128];
 		FormatEx(sMessage,sizeof sMessage,"%t", "client is not loaded");
 		A_PrintToChat(iClient, sMessage);
@@ -259,8 +409,8 @@ public void DisplayInProgressMenu(int iClient, int iTarget, int iItem)
 	else {
 		char sName[32];
 		GetClientName(iTarget, SZF(sName));
-		SetMenuTitle(g_hInProgressMenu[iTarget], "%t", "achievements in progress menu: title", sName);
-		DisplayMenuAtItem(g_hInProgressMenu[iTarget], iClient, iItem, MTF);
+		SetMenuTitle(g_hInProgressMenu[iTarget][i], "%t", "achievements in progress menu: title", sName);
+		DisplayMenu(g_hInProgressMenu[iTarget][i], iClient, MTF);
 	}
 }
 

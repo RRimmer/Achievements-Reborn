@@ -13,7 +13,7 @@
 // ==============================================================================================================================
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
-#define PLUGIN_VERSION "R 1.0"
+#define PLUGIN_VERSION "R 1.1"
 public Plugin myinfo =
 {
 	name 			= "[Achievements][Reborn] Core",
@@ -37,6 +37,8 @@ Handle g_hKeyValues;
 Handle g_hTrie_AchievementData;			// name -> event, executor, condition, count, reward
 Handle g_hTrie_ClientProgress[MPS];		// name -> count
 Handle g_hTrie_EventAchievements;			// event -> array with achievement names
+Handle g_hTrie_GroupsAchievements;
+ArrayList g_hArray_GroupAchievements[32];
 EngineVersion g_EngineVersion;
 
 Handle g_hCoreIsLoad,
