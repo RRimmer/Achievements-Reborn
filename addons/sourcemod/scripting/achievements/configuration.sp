@@ -3,8 +3,8 @@ void LoadAchivements()
 	char sPath[PMP];
 	BuildPath(Path_SM, SZF(sPath), "configs/achievements.ini");
 	
-	Handle hKeyValues = CreateKeyValues("Settings");
-	if ( !FileToKeyValues(hKeyValues, sPath) ) {
+	g_hKeyValues = CreateKeyValues("Settings");
+	if ( !FileToKeyValues(g_hKeyValues, sPath) ) {
 		LogError("File \"%s\" not found", sPath);
 		SetFailState("File \"%s\" not found", sPath);
 	}
@@ -19,23 +19,27 @@ void LoadAchivements()
 	g_hTrie_EventAchievements = CreateTrie();
 	
 	Handle 
-		hAchievementData, 
+		hAchievementData,
+		hGroupData, 
 		hEventsArray; 
 	char	sName[64], 
 		sBuffer[256], 
+		sGroupName[64], 
 		sExecutor[16],
 		sCommands[512]; 
 	int 	iBuffer;
 
-	KvGetString(hKeyValues,"command",sCommands,sizeof sCommands);
+	KvGetString(g_hKeyValues,"command",sCommands,sizeof sCommands);
 	
-	g_iSettings[0] = KvGetNum(hKeyValues,"warmup");
-	g_iSettings[1] = KvGetNum(hKeyValues,"roundend");
-	g_iSettings[2] = KvGetNum(hKeyValues,"min_players");
-	g_iSettings[3] = KvGetNum(hKeyValues,"notification");
-	g_iSettings[4] = KvGetNum(hKeyValues,"server_id");
-	g_iSettings[5] = KvGetNum(hKeyValues,"continue");
-	KvGetString(hKeyValues,"tag",g_sTag,sizeof g_sTag);
+	g_iSettings[0] = KvGetNum(g_hKeyValues,"warmup");
+	g_iSettings[1] = KvGetNum(g_hKeyValues,"roundend");
+	g_iSettings[2] = KvGetNum(g_hKeyValues,"min_players");
+	g_iSettings[3] = KvGetNum(g_hKeyValues,"notification");
+	g_iSettings[4] = KvGetNum(g_hKeyValues,"server_id");
+	g_iSettings[5] = KvGetNum(g_hKeyValues,"continue");
+	g_iSettings[6] = KvGetNum(g_hKeyValues,"inv_thisorthat");
+
+	KvGetString(g_hKeyValues,"tag",g_sTag,sizeof g_sTag);
 
 	if(sCommands[0])
 	{
@@ -53,27 +57,93 @@ void LoadAchivements()
 		RegConsoleCmd("sm_achievements", 	Command_Achievements);
 		RegConsoleCmd("sm_ach", 			Command_Achievements);
 	}
-	
-	KvRewind(hKeyValues);
-	if(KvJumpToKey(hKeyValues,"Achievement"))
+
+	KvRewind(g_hKeyValues);
+	if(KvJumpToKey(g_hKeyValues,"Groups"))
 	{
-		KvGotoFirstSubKey(hKeyValues);
+		int i = 0;
+		if(KvGotoFirstSubKey(g_hKeyValues))
+		{
+			g_hTrie_GroupsAchievements = CreateTrie();
+			do {
+				hGroupData = CreateTrie();
+				KvGetSectionName(g_hKeyValues, SZF(sGroupName));
+				g_hArray_GroupAchievements[i] = CreateArray(ByteCountToCells(64));
+				SetTrieValue(hGroupData,"index",i);
+				SetTrieValue(hGroupData,"count",KvGetNum(g_hKeyValues,"count",666));
+				KvGetString(g_hKeyValues,"event",SZF(sBuffer));
+				SetTrieString(hGroupData,"event",sBuffer);
+				KvGetString(g_hKeyValues,"executor",SZF(sBuffer));
+				SetTrieString(hGroupData,"executor",sBuffer);
+				KvGetString(g_hKeyValues,"condition",SZF(sBuffer));
+				SetTrieString(hGroupData,"condition",sBuffer);
+				KvGetString(g_hKeyValues,"sound_done",SZF(sBuffer));
+				PushArrayString(g_hArray_sAchievementSound, sBuffer);
+				SetTrieString(hGroupData,"sound_done",sBuffer);
+				SetTrieValue(hGroupData,"notification_all",KvGetNum(g_hKeyValues,"notification_all",1));
+				SetTrieValue(hGroupData,"sound_done_volume",KvGetFloat(g_hKeyValues,"sound_done_volume",0.5));
+				SetTrieValue(g_hTrie_GroupsAchievements,sGroupName,hGroupData);
+				PrintToServer(sGroupName);
+				i++;
+			} while ( KvGotoNextKey(g_hKeyValues) );
+		}
+	}
+	
+	KvRewind(g_hKeyValues);
+	if(KvJumpToKey(g_hKeyValues,"Achievement"))
+	{
+		KvGotoFirstSubKey(g_hKeyValues);
 		do {
-			KvGetSectionName(hKeyValues, SZF(sName));
+			KvGetSectionName(g_hKeyValues, SZF(sName));
 			if ( GetTrieValue(g_hTrie_AchievementData, sName, hAchievementData) ) {
 				LogError("Duplicate achievement name \"%s\"", sName);
 				continue;
 			}
 			
 			hAchievementData = CreateTrie();
-			KvGetString(hKeyValues, "event", SZF(sBuffer));
+
+			KvGetString(g_hKeyValues, "group", SZF(sGroupName));
+			SetTrieString(hAchievementData, "group", sGroupName);
+			if(g_hTrie_GroupsAchievements != INVALID_HANDLE && GetTrieValue(g_hTrie_GroupsAchievements,sGroupName,hGroupData))
+			{
+				GetTrieValue(hGroupData,"index",iBuffer);
+				g_hArray_GroupAchievements[iBuffer].PushString(sName);
+			}
+			KvGetString(g_hKeyValues, "count", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sGroupName,hGroupData);
+				GetTrieValue(hGroupData,"count",iBuffer);
+				SetTrieValue(hAchievementData, "count", iBuffer);
+			}
+			else
+				SetTrieValue(hAchievementData, "count", KvGetNum(g_hKeyValues, "count", 666));
+
+			KvGetString(g_hKeyValues, "event", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sGroupName,hGroupData);
+				GetTrieString(hGroupData,"event",SZF(sBuffer));
+			}
+			else
+				KvGetString(g_hKeyValues, "event", SZF(sBuffer));
+
 			if ( !GetTrieValue(g_hTrie_EventAchievements, sBuffer, hEventsArray) ) {
 				hEventsArray = CreateArray(ByteCountToCells(64));
 				SetTrieValue(g_hTrie_EventAchievements, sBuffer, hEventsArray);
 			}
 			PushArrayString(hEventsArray, sName);
 			
-			KvGetString(hKeyValues, "executor", SZF(sExecutor));
+			
+			KvGetString(g_hKeyValues, "executor", SZF(sExecutor),"");
+			if(!strcmp(sExecutor,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sGroupName,hGroupData);
+				GetTrieString(hGroupData,"executor",SZF(sExecutor));
+			}
+			else
+				KvGetString(g_hKeyValues, "executor", SZF(sExecutor));
+
 			if (!strcmp(sExecutor, "userid")) {
 				if ( !GetTrieValue(hHookedClientEvents, sBuffer, iBuffer) && !HookEventEx(sBuffer, Event_ClientCallback) ) {
 					LogError("Invalid event name \"%s\"", sBuffer);
@@ -92,32 +162,79 @@ void LoadAchivements()
 			SetTrieString(hAchievementData, "event", sBuffer);
 			SetTrieString(hAchievementData, "executor", sExecutor);
 			
-			KvGetString(hKeyValues, "trigger", SZF(sBuffer));
+			KvGetString(g_hKeyValues, "trigger", SZF(sBuffer));
 			SetTrieString(hAchievementData, "trigger", sBuffer);
 			
-			KvGetString(hKeyValues, "outcome", SZF(sBuffer));
+			KvGetString(g_hKeyValues, "outcome", SZF(sBuffer));
 			SetTrieString(hAchievementData, "outcome", sBuffer);
 			
-			KvGetString(hKeyValues, "condition", SZF(sBuffer));
+			KvGetString(g_hKeyValues, "condition", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sBuffer,hGroupData);
+				GetTrieString(hGroupData,"condition",SZF(sBuffer));
+			}
+			else
+				KvGetString(g_hKeyValues, "condition", SZF(sBuffer),"none");
+
 			SetTrieString(hAchievementData, "condition", sBuffer);
+
+			KvGetString(g_hKeyValues, "map", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sBuffer,hGroupData);
+				GetTrieString(hGroupData,"map",SZF(sBuffer));
+			}
+			else
+				KvGetString(g_hKeyValues, "map", SZF(sBuffer),"");
+
+			SetTrieString(hAchievementData, "map", sBuffer);
 			
-			SetTrieValue(hAchievementData, "count", KvGetNum(hKeyValues, "count", 666));
-			SetTrieValue(hAchievementData, "notification_all", KvGetNum(hKeyValues, "notification_all", 1));
+			SetTrieValue(hAchievementData, "hide", KvGetNum(g_hKeyValues, "hide", 0));
+
+			KvGetString(g_hKeyValues, "notification_all", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sBuffer,hGroupData);
+				GetTrieValue(hGroupData,"notification_all",iBuffer);
+				SetTrieValue(hAchievementData, "notification_all", iBuffer);
+			}
+			else
+				SetTrieValue(hAchievementData, "notification_all", KvGetNum(g_hKeyValues, "notification_all", 1));
+
 			
-			KvGetString(hKeyValues, "sound_done", SZF(sBuffer));
+			KvGetString(g_hKeyValues, "sound_done", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				GetTrieValue(g_hTrie_GroupsAchievements,sBuffer,hGroupData);
+				GetTrieString(hGroupData,"sound_done",SZF(sBuffer));
+			}
+			else
+				KvGetString(g_hKeyValues, "sound_done", SZF(sBuffer),"");
+
 			SetTrieString(hAchievementData, "sound_done", sBuffer);
-			SetTrieValue(hAchievementData, "sound_done_volume", KvGetFloat(hKeyValues, "sound_done_volume", 0.5));
+			PushArrayString(g_hArray_sAchievementSound, sBuffer);
+			
+			KvGetString(g_hKeyValues, "sound_done_volume", SZF(sBuffer),"");
+			if(!strcmp(sBuffer,""))
+			{
+				float sV;
+				GetTrieValue(g_hTrie_GroupsAchievements,sBuffer,hGroupData);
+				GetTrieValue(hGroupData,"sound_done_volume",sV);
+				SetTrieValue(hAchievementData, "sound_done_volume", sV);
+			}
+			else
+				SetTrieValue(hAchievementData, "sound_done_volume", KvGetFloat(g_hKeyValues, "sound_done_volume", 0.5));
 			
 			SetTrieValue(g_hTrie_AchievementData, sName, hAchievementData);
 			PushArrayString(g_hArray_sAchievementNames, sName);
-			PushArrayString(g_hArray_sAchievementSound, sBuffer);
 			
-		} while ( KvGotoNextKey(hKeyValues) );
+		} while ( KvGotoNextKey(g_hKeyValues) );
 	}
 	
 	CloseHandle(hHookedClientEvents);
 	CloseHandle(hHookedAttackerEvents);
-	CloseHandle(hKeyValues);
 	
 	g_iTotalAchievements = GetArraySize(g_hArray_sAchievementNames);
+	Ach_OnCoreLoaded();
 }
