@@ -330,21 +330,11 @@ void SQL_Callback_TopPlayers(Database database, DBResultSet result, const char[]
 	CloseHandle(hPanel);
 }
 
-void SQL_Callback_InventoryPlayers(Database database, DBResultSet result, const char[] error, int iClient)
+void DisplayInventory(int iClient)
 {
-	if (result == null)
-	{
-		LogError("SQL_Callback_InventoryPlayers: %s", error);
-		return;
-	}
-	
-	iClient = GetClientOfUserId(iClient);
-	if (!iClient)return;
-	
-	
 	char sBuffer[64], sName[64];
 	
-	int count = result.RowCount;
+	int count = g_hArray_Rewards[iClient].Length;
 	if (count == 0)
 	{
 		FormatEx(sBuffer, sizeof sBuffer, "%t", "InvEmpty");
@@ -354,15 +344,12 @@ void SQL_Callback_InventoryPlayers(Database database, DBResultSet result, const 
 	
 	hMenu.SetTitle("%t\n \n", "inventory menu: title");
 	
-	for (int c = 1; c <= count; c++)
+	for (int i = 0; i < count; i++)
 	{
-		if (result.FetchRow())
-		{
-			result.FetchString(0, sName, sizeof(sName));
-			Format(SZF(sBuffer), "%s: reward", sName);
-			Format(sBuffer, sizeof(sBuffer), "%t", sBuffer);
-			hMenu.AddItem(sName, sBuffer);
-		}
+		g_hArray_Rewards[iClient].GetString(i, sName, sizeof sName);
+		Format(SZF(sBuffer), "%s: reward", sName);
+		Format(sBuffer, sizeof(sBuffer), "%t", sBuffer);
+		hMenu.AddItem(sName, sBuffer);
 	}
 	hMenu.ExitBackButton = true;
 	hMenu.Display(iClient, 0);

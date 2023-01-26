@@ -51,7 +51,7 @@ void CreateTables()
 																`id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
 																`auth` VARCHAR(32) NOT NULL,\
 																`name` VARCHAR(64) NOT NULL,\
-																`completed` INTEGER NOT NULL,\
+																`completed` INTEGER NOT NULL DEFAULT 0,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
 		
@@ -70,7 +70,7 @@ void CreateTables()
 																`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
 																`auth` VARCHAR(32) NOT NULL,\
 																`name` VARCHAR(64) NOT NULL,\
-																`completed` INTEGER NOT NULL,\
+																`completed` INTEGER NOT NULL DEFAULT 0,\
 																`server_id` INTEGER NOT NULL);");
 		g_hSQLdb.Query(SQL_CheckError, query);
 		
@@ -88,7 +88,7 @@ void CreateTables()
 	for (int i = 0; i < g_hArray_sAchievementNames.Length; i++)
 	{
 		g_hArray_sAchievementNames.GetString(i, sBuffer, sizeof sBuffer);
-		g_hSQLdb.Format(SZF(query), "ALTER TABLE `ach_progress` ADD `%s` INTEGER NOT NULL;", sBuffer);
+		g_hSQLdb.Format(SZF(query), "ALTER TABLE `ach_progress` ADD `%s` INTEGER NOT NULL DEFAULT 0;", sBuffer);
 		g_hSQLdb.Query(SQL_CheckError2, query);
 	}
 	LC(i) {
@@ -193,7 +193,33 @@ public void SQLT_OnLoadProgress(Handle hOwner, Handle hQuery, const char[] sErro
 		}
 		CreateMenuGroups(iClient);
 	}
+	char sQuery[256];
+	g_hSQLdb.Format(SZF(sQuery), "SELECT `ach_name` FROM `ach_inventory` WHERE `client_id` = %d;", g_iClientId[iClient]);
+	g_hSQLdb.Query(SQL_Callback_InventoryPlayer, sQuery, GetClientUserId(iClient));
+}
+
+void SQL_Callback_InventoryPlayer(Database database, DBResultSet result, const char[] error, int iClient)
+{
+	if (result == null)
+	{
+		LogError("SQL_Callback_InventoryPlayer: %s", error);
+		return;
+	}
 	
+	iClient = GetClientOfUserId(iClient);
+	if (!iClient)return;
+	
+	
+	char sName[64];
+	
+	for (int i = 0; i < result.RowCount; i++)
+	{
+		if (result.FetchRow())
+		{
+			result.FetchString(0, sName, sizeof(sName));
+			g_hArray_Rewards[iClient].PushString(sName);
+		}
+	}
 }
 
 void SaveProgressAll(int iClient)
@@ -215,9 +241,7 @@ void SaveProgressAll(int iClient)
 
 void RemoveReward(int iClient, char[] sInfo)
 {
-	char sQuery[256];
-	g_hSQLdb.Format(SZF(sQuery), "DELETE FROM `ach_inventory` WHERE `client_id` = '%d'  AND `ach_name` = '%s';", g_iClientId[iClient], sInfo);
-	g_hSQLdb.Query(SQLT_OnCheckError, sQuery);
+	g_hArray_Rewards[iClient].Erase(g_hArray_Rewards[iClient].FindString(sInfo));
 }
 
 void SaveProgressCompleted(int iClient)
@@ -244,9 +268,7 @@ public void SQLT_OnCheckError(Handle hOwner, Handle hQuery, const char[] sError,
 
 void AddItemInventory(int iClient, char[] sName)
 {
-	char sQuery[256];
-	g_hSQLdb.Format(SZF(sQuery), "INSERT INTO `ach_inventory` (`client_id`,`ach_name`) VALUES ('%i', '%s')", g_iClientId[iClient], sName);
-	g_hSQLdb.Query(SQLT_AddInventoryItem, sQuery, UID(iClient));
+	g_hArray_Rewards[iClient].PushString(sName);
 	
 	Call_StartForward(g_hInvAddItem);
 	Call_PushCell(iClient);
@@ -254,17 +276,10 @@ void AddItemInventory(int iClient, char[] sName)
 	Call_Finish();
 }
 
-public void SQLT_AddInventoryItem(Handle hOwner, Handle hQuery, const char[] sError, any hDatapack)
-{
-	if (!hQuery) {
-		LogError("SQLT_AddInventoryItem failure: \"%s\"", sError);
-	}
-}
-
 public void SQLT_OnUpdateProgress2(Handle hOwner, Handle hQuery, const char[] sError, any hDatapack)
 {
 	if (!hQuery) {
-		LogError("SQLT_AddInventoryItem failure: \"%s\"", sError);
+		LogError("SQLT_OnUpdateProgress2 failure: \"%s\"", sError);
 	}
 }
 
@@ -285,9 +300,17 @@ public void DisplayPlayersTopMenu(int iClient)
 	g_hSQLdb.Query(SQL_Callback_TopPlayers, query, GetClientUserId(iClient));
 }
 
-public void DisplayInventory(int iClient)
+public void OnSaveInventory(int iClient)
 {
-	char sQuery[256];
-	g_hSQLdb.Format(SZF(sQuery), "SELECT `ach_name` FROM `ach_inventory` WHERE `client_id` = %d;", g_iClientId[iClient]);
-	g_hSQLdb.Query(SQL_Callback_InventoryPlayers, sQuery, GetClientUserId(iClient));
-} 
+	char sBuffer[64], 
+	sQuery[256];
+	
+	Transaction hTransaction = new Transaction();
+	for (int i = 0; i < g_hArray_Rewards[iClient].Length; i++)
+	{
+		g_hArray_Rewards[iClient].GetString(i, sBuffer, sizeof sBuffer);
+		g_hSQLdb.Format(SZF(sQuery), "INSERT INTO `ach_inventory` (`client_id`,`ach_name`) VALUES ('%i', '%s')", g_iClientId[iClient], sBuffer);
+		hTransaction.AddQuery(sQuery);
+	}
+	g_hSQLdb.Execute(hTransaction, SQLT_OnUpdateProgress, SQL_TransactionFailure, _, DBPrio_High);
+}

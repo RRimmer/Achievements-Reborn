@@ -59,6 +59,8 @@ void GetRewardInventory(int iClient, char[] sName)
 	Format(sMessage,sizeof sMessage,"%t", "message_reward", sMessage);
 	A_PrintToChat(iClient, sMessage);
 
+	LogToFile(g_sLogFile, "Игрок %L получил награду за достижение %s(тип: %s;количество: %s)", iClient, sName, sTriggers, sOutcomes);
+
 	Call_StartForward(g_hRewardGivenPost);
 	Call_PushCell(iClient);
 	Call_PushString(sName);

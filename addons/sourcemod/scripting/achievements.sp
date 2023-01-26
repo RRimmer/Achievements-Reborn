@@ -15,7 +15,7 @@
 // ==============================================================================================================================
 // >>> PLUGIN INFORMATION
 // ==============================================================================================================================
-#define PLUGIN_VERSION "[Snapshot] 1.2 ver. 3"
+#define PLUGIN_VERSION "[Snapshot] 1.2 ver. 4"
 public Plugin myinfo = 
 {
 	name = "[Achievements][Reborn] Core", 
@@ -33,6 +33,9 @@ public Plugin myinfo =
 // ==============================================================================================================================
 // >>> GLOBAL VARIABLES
 // ==============================================================================================================================		
+
+stock const char g_sLogFile[] = "addons/sourcemod/logs/achievements_reward.log";
+
 ArrayList g_hArray_sAchievementNames; // array with names
 ArrayList g_hArray_sAchievementSound;
 Handle g_hKeyValues;
@@ -41,6 +44,7 @@ Handle g_hTrie_ClientProgress[MPS]; // name -> count
 Handle g_hTrie_EventAchievements; // event -> array with achievement names
 Handle g_hTrie_GroupsAchievements;
 ArrayList g_hArray_GroupAchievements[32];
+ArrayList g_hArray_Rewards[MPS];
 EngineVersion g_EngineVersion;
 
 Handle g_hCoreIsLoad, 
@@ -194,6 +198,7 @@ public void OnClientPostAdminCheck(int iClient)
 	if (IsClientInGame(iClient) && !IsFakeClient(iClient))
 	{
 		g_hTrie_ClientProgress[iClient] = CreateTrie();
+		g_hArray_Rewards[iClient] = CreateArray(ByteCountToCells(128));
 		LoadClient(iClient);
 	}
 }
@@ -203,7 +208,9 @@ public void OnClientDisconnect(int iClient)
 	if (g_hTrie_ClientProgress[iClient])
 	{
 		SaveProgressAll(iClient);
+		OnSaveInventory(iClient);
 		delete g_hTrie_ClientProgress[iClient];
+		delete g_hArray_Rewards[iClient];
 	}
 }
 
