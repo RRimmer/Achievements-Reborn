@@ -76,7 +76,6 @@ public int Handler_AchivementInvMenu(Menu hMenu, MenuAction action, int iClient,
 		case MenuAction_Select: {
 			char sInfo[64];
 			GetMenuItem(hMenu, iSlot, SZF(sInfo));
-			GetRewardInventory(iClient,sInfo);
 			RemoveReward(iClient,sInfo);
 			DisplayInventory(iClient);
 		}
@@ -246,7 +245,22 @@ public int Handler_ShowAchievementDetails(Menu hMenu, MenuAction action, int iCl
 {
 	switch ( action ) {
 		case MenuAction_Select: {
-			if ( iSlot == g_iExitBackButtonSlot ) {
+			if( iSlot == 6)
+			{
+				if(g_hArray_Notif[iClient].FindString(g_sLastAch[iClient]) != -1) g_hArray_Notif[iClient].Erase(g_hArray_Notif[iClient].FindString(g_sLastAch[iClient]));
+				else
+				{
+					if(g_hArray_Notif[iClient].Length < 32) g_hArray_Notif[iClient].PushString(g_sLastAch[iClient]);
+					else
+					{
+						char sMessage[128];
+						FormatEx(sMessage,sizeof sMessage,"%t", "message_maxhud");
+						A_PrintToChat(iClient, sMessage);
+					}
+				}
+				DisplayAchivementDetailsMenu(iClient, iClient, g_sLastAch[iClient]);
+			}
+			else if ( iSlot == g_iExitBackButtonSlot ) {
 				int iTarget = CID(g_iViewTarget[iClient]);
 				
 				if ( iTarget ) {

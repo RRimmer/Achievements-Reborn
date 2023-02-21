@@ -111,7 +111,7 @@ void LoadClient(int iClient)
 		GetClientAuthId(iClient, AuthId_Steam2, g_sAuth[iClient], sizeof(g_sAuth));
 		
 		char sQuery[256];
-		g_hSQLdb.Format(SZF(sQuery), "SELECT `id` FROM `ach_progress` WHERE `auth` = '%s' AND `server_id` = '%i' LIMIT 1;", g_sAuth[iClient], g_iSettings[4]);
+		g_hSQLdb.Format(SZF(sQuery), "SELECT `id`,`completed` FROM `ach_progress` WHERE `auth` = '%s' AND `server_id` = '%i' LIMIT 1;", g_sAuth[iClient], g_iSettings[4]);
 		g_hSQLdb.Query(SQLT_OnLoadClient, sQuery, UID(iClient));
 	}
 }
@@ -128,6 +128,7 @@ public void SQLT_OnLoadClient(Handle hOwner, Handle hQuery, const char[] sError,
 	
 	if (SQL_FetchRow(hQuery)) {
 		g_iClientId[iClient] = SQL_FetchInt(hQuery, 0);
+		g_iCCAch[iClient] = SQL_FetchInt(hQuery, 1);
 		LoadProgress(iClient);
 	}
 	else {
@@ -210,16 +211,20 @@ void SQL_Callback_InventoryPlayer(Database database, DBResultSet result, const c
 	if (!iClient)return;
 	
 	
-	char sName[64];
-	
+	char sName[64],
+	 	sQuery[1024];
+	Transaction hTransaction = new Transaction();
 	for (int i = 0; i < result.RowCount; i++)
 	{
 		if (result.FetchRow())
 		{
 			result.FetchString(0, sName, sizeof(sName));
 			g_hArray_Rewards[iClient].PushString(sName);
+			g_hSQLdb.Format(SZF(sQuery), "DELETE FROM `ach_inventory` WHERE `client_id` = %d AND `ach_name` = '%s';", g_iClientId[iClient], sName);
+			hTransaction.AddQuery(sQuery);
 		}
 	}
+	g_hSQLdb.Execute(hTransaction, SQLT_OnUpdateProgress, SQL_TransactionFailure, _, DBPrio_High);
 }
 
 void SaveProgressAll(int iClient)
@@ -237,20 +242,15 @@ void SaveProgressAll(int iClient)
 		hTransaction.AddQuery(sQuery);
 	}
 	g_hSQLdb.Execute(hTransaction, SQLT_OnUpdateProgress, SQL_TransactionFailure, _, DBPrio_High);
+	g_hSQLdb.Format(SZF(sQuery), "UPDATE `ach_progress` SET `completed` = %i WHERE `id` = %d AND `server_id` = '%i';", g_iCCAch[iClient], g_iClientId[iClient], g_iSettings[4]);
+	g_hSQLdb.Query(SQLT_OnUpdateProgress2, sQuery);
 }
 
 void RemoveReward(int iClient, char[] sInfo)
 {
 	g_hArray_Rewards[iClient].Erase(g_hArray_Rewards[iClient].FindString(sInfo));
+	GetRewardInventory(iClient,sInfo);
 }
-
-void SaveProgressCompleted(int iClient)
-{
-	char sQuery[256];
-	g_hSQLdb.Format(SZF(sQuery), "UPDATE `ach_progress` SET `completed` = `completed`+ 1 WHERE `id` = %d AND `server_id` = '%i';", g_iClientId[iClient], g_iSettings[4]);
-	g_hSQLdb.Query(SQLT_OnUpdateProgress2, sQuery);
-}
-
 public void SQLT_OnInsertProgress(Handle hOwner, Handle hQuery, const char[] sError, any hDatapack)
 {
 	if (!hQuery) {

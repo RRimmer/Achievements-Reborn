@@ -87,6 +87,12 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 			if ( bFlag || !strcmp("none",sBuffer)) {
 				iCount++;
 				SetTrieValue(g_hTrie_ClientProgress[iClient], sName, iCount);
+				GetClientCookie(iClient, g_hCookie, SZF(sBuffer));
+				if(g_hArray_Notif[iClient].FindString(sName) != -1)
+				{
+					FormatEx(SZF(sBuffer), "%s: name", sName);
+					HudMessageByChannel(g_fHudPOS[0], g_fHudPOS[1], g_fHudTime, g_iHudColor[0], g_iHudColor[1], g_iHudColor[2], g_iHudColor[3], 0, 0.0, 0.1, 0.1, 0, iClient, "%t: %i/%i", sBuffer, iCount, iBuffer);
+				}
 
 				if ( iCount >= iBuffer ) {
 					char sTranslation[64],
@@ -127,14 +133,26 @@ void ProcessEvents(int iClient, Handle hEvent, const char[] sEventName, bool bAt
 						EmitSoundToClient(iClient,sSound, _, SNDCHAN_STATIC,SNDLEVEL_NORMAL,SND_NOFLAGS,fVolume);
 					}
 					SetTrieValue(g_hTrie_ClientProgress[iClient], sName, -1);
-					SaveProgressCompleted(iClient);
+					g_iCCAch[iClient]++;
 					GiveReward(iClient, sName);
+					int iIndex;
+					if((iIndex = g_hArray_Notif[iClient].FindString(sName)) != -1)
+						g_hArray_Notif[iClient].Erase(iIndex);
 					CreateMenuGroups(iClient);
 				}
 			}
 		}
 	}
 	sLastEvent[iClient][0] = 0; 
+}
+
+void HudMessageByChannel(float x, float y, float hold_time, int r, int g, int b, int a, int effect, float fx_time, float fade_in, float fade_out, int channel, int iClient, char[] message, any...)
+{
+	char buf[PLATFORM_MAX_PATH];
+	VFormat(buf, sizeof(buf), message, 15);
+	
+	SetHudTextParams(x, y, hold_time, r, g, b, a, effect, fx_time, fade_in, fade_out);
+	ShowHudText(iClient, channel, buf);
 }
 
 void AlertText(int iClient, const char[] sMessage, any ...)

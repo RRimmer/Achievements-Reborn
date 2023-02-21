@@ -152,12 +152,19 @@
 		"ru"				"Прогресс: {1}/{2} ({3}%%)"
 		"en"				"Progress: {1}/{2} ({3}%%)"
 	}
+	"menu: progress"
+    {
+        "#format"            "{1:s}"
+        "ru"                "Прогресс на экране[{1}]"
+        "en"                "Progress on screen[{1}]"
+    }
 	
 	//Чат
 	"Achievements reward"
 	{
 		"#format"			"{1:s}"
 		"ru"				"Вы получили награду в виде: {RED}{1}"
+		"en"				"You have received a reward in the form of {RED}{1}"
 	}
 	"client got achievement"
 	{
@@ -186,6 +193,11 @@
 	{
 		"ru"				"Ваш инвентарь пуст"
 		"en"				"Your inventory is empty"
+	}
+	"message_reward"
+	{
+		"#format"			"{1:s}"
+		"ru"				"Получил: {1}"
 	}
 
 	//Алерт

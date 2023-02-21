@@ -339,6 +339,7 @@ void DisplayInventory(int iClient)
 	{
 		FormatEx(sBuffer, sizeof sBuffer, "%t", "InvEmpty");
 		A_PrintToChat(iClient, sBuffer);
+		DisplayAchivementsMenu(iClient);
 	}
 	Menu hMenu = new Menu(Handler_AchivementInvMenu);
 	
@@ -471,6 +472,11 @@ public void DisplayAchivementDetailsMenu(int iClient, int iTarget, const char[] 
 	DrawPanelText(hPanel, sBuffer);
 	
 	DrawPanelText(hPanel, " ");
+	
+	SetPanelCurrentKey(hPanel, 6);
+	strcopy(g_sLastAch[iClient], sizeof g_sLastAch[], sName);
+	Format(SZF(sBuffer), "%t", "menu: progress", g_hArray_Notif[iClient].FindString(sName) != -1?"+":"-");
+	DrawPanelItem(hPanel, sBuffer, iCount == -1?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 	
 	SetPanelCurrentKey(hPanel, g_iExitBackButtonSlot);
 	FormatEx(SZF(sBuffer), "%t", "menu: back");

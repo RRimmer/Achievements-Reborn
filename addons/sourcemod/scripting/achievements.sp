@@ -9,6 +9,7 @@
 #include <achievements>
 #include <morecolors>
 #include <csgo_colors>
+#include <clientprefs>
 
 #pragma dynamic 131072
 
@@ -45,6 +46,7 @@ Handle g_hTrie_EventAchievements; // event -> array with achievement names
 Handle g_hTrie_GroupsAchievements;
 ArrayList g_hArray_GroupAchievements[32];
 ArrayList g_hArray_Rewards[MPS];
+ArrayList g_hArray_Notif[MPS];
 EngineVersion g_EngineVersion;
 
 Handle g_hCoreIsLoad, 
@@ -53,6 +55,10 @@ g_hRewardGiven,
 g_hRewardGivenPost, 
 g_hEventWork, 
 g_hAchAddMenu;
+
+char g_sLastAch[MPS][64];
+
+Cookie g_hCookie;
 
 StringMap hTriggers = null;
 enum struct eTriggers
@@ -71,6 +77,10 @@ int iTriggerNum = 0;
 //5 - Continue
 //6 - Reward_inv(bool)
 int g_iSettings[7];
+int g_iHudColor[4];
+int g_iCCAch[MAXPLAYERS+1];
+float g_fHudTime;
+float g_fHudPOS[2];
 char g_sTag[128], 
 g_sMapName[256];
 bool IsRoundEnd, 
@@ -138,6 +148,7 @@ public APLRes AskPluginLoad2(Handle hMySelf, bool bLate, char[] sError, int iErr
 public void OnPluginStart()
 {
 	hTriggers = new StringMap();
+    g_hCookie = RegClientCookie("achievements_progress", "Прогресс Ачивки", CookieAccess_Private);
 	// load translations
 	LoadTranslations("achievements_common.phrases.txt");
 	LoadTranslations("achievements.phrases.txt");
@@ -199,6 +210,19 @@ public void OnClientPostAdminCheck(int iClient)
 	{
 		g_hTrie_ClientProgress[iClient] = CreateTrie();
 		g_hArray_Rewards[iClient] = CreateArray(ByteCountToCells(128));
+		g_hArray_Notif[iClient] = CreateArray(ByteCountToCells(128));
+		char sBuffer[2048];
+		GetClientCookie(iClient, g_hCookie, sBuffer, sizeof sBuffer);
+		if(sBuffer[0])
+		{
+			char sBufs[32][64];
+			int count = ExplodeString(sBuffer, ";", sBufs, sizeof(sBufs), sizeof(sBufs[]));
+
+			for(int c; c < count; c++)
+			{
+				g_hArray_Notif[iClient].PushString(sBufs[c]);
+			}
+		}
 		LoadClient(iClient);
 	}
 }
@@ -209,7 +233,21 @@ public void OnClientDisconnect(int iClient)
 	{
 		SaveProgressAll(iClient);
 		OnSaveInventory(iClient);
+		char sBuffer[2048],
+			sBuff[64];
+		for(int i = 0; i < g_hArray_Notif[iClient].Length; i++)
+		{
+			g_hArray_Notif[iClient].GetString(i, sBuff,sizeof sBuff);
+			if(i == 0) StrCat(sBuffer,sizeof sBuffer, sBuff);
+			else
+			{
+				Format(sBuff,sizeof sBuff, ";%s",sBuff);
+				StrCat(sBuffer,sizeof sBuffer, sBuff);
+			}
+		}
+		SetClientCookie(iClient, g_hCookie, sBuffer);
 		delete g_hTrie_ClientProgress[iClient];
+		delete g_hArray_Notif[iClient];
 		delete g_hArray_Rewards[iClient];
 	}
 }

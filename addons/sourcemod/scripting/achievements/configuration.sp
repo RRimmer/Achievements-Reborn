@@ -58,6 +58,29 @@ void LoadAchivements()
 		RegConsoleCmd("sm_ach", 			Command_Achievements);
 	}
 
+	KvGetString(g_hKeyValues,"hud_xy",sCommands,sizeof sCommands);
+	if(sCommands[0])
+	{
+		char sBufs[2][12];
+		ExplodeString(sCommands, " ", sBufs, sizeof(sBufs), sizeof(sBufs[]));
+
+		g_fHudPOS[0] = StringToFloat(sBufs[0]);
+		g_fHudPOS[1] = StringToFloat(sBufs[1]);
+	}
+	g_fHudTime = KvGetFloat(g_hKeyValues,"hud_time");
+
+	KvGetString(g_hKeyValues,"hud_color",sCommands,sizeof sCommands);
+	if(sCommands[0])
+	{
+		char sBufs[4][12];
+		ExplodeString(sCommands, " ", sBufs, sizeof(sBufs), sizeof(sBufs[]));
+
+		g_iHudColor[0] = StringToInt(sBufs[0]);
+		g_iHudColor[1] = StringToInt(sBufs[1]);
+		g_iHudColor[2] = StringToInt(sBufs[2]);
+		g_iHudColor[3] = StringToInt(sBufs[3]);
+	}
+
 	KvRewind(g_hKeyValues);
 	if(KvJumpToKey(g_hKeyValues,"Groups"))
 	{
